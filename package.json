@@ -1,0 +1,9 @@
+{
+    "name": "Projey M'Dame",
+    "version": "1.0.0",
+    "main": "Serveur.js",
+    "dependencies": {
+        "express": "^4.17.1",
+        "socket.io": "^2.3.0"
+    }
+}
