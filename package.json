@@ -1,9 +1,10 @@
 {
-  "name": "Projey M'Dame",
+  "name": "projey-dame",
   "version": "1.0.0",
   "description": "Projet de dame dans le cadre d'étude du Master MIASHS WIC et DCISS en deuxième année.",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
   }
 }

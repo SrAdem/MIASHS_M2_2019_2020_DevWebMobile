@@ -1,10 +1,23 @@
-const express = require('express');
-const app = express();
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-app.get('/', function (req, res) {
-  res.send('<h1>Collectif métissé -- Projet Jeu de dames</h1>');
+app.get("/", function(req, res){
+    res.sendFile(__dirname + '/client/test.html');
 });
 
-app.listen(3000, function () {
-  console.log('Server listening on port 3000!')
+io.on('connection', function(socket){
+    console.log('a user is connected');
+    socket.on('disconnect', function (){
+        console.log('a user is disconnected');
+    });
+    socket.on('chat message', function (msg){
+        console.log('message recu : ' + msg);
+        io.emit('chat message', msg);
+    });
+
+});
+
+http.listen(3000, function(){
+    console.log("Server running on 3000")
 });
