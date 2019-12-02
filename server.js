@@ -1,6 +1,8 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var User = require('./model/user');
+
 
 app.get("/", function(req, res){
     res.sendFile(__dirname + '/client/test.html');
@@ -8,6 +10,13 @@ app.get("/", function(req, res){
 
 io.on('connection', function(socket){
     console.log('a user is connected');
+
+
+    socket.on('sign in', function (name, email, pwd) {
+        var u = new User(name, email, pwd);
+        //add to BDD
+        io.emit('name', name);
+    });
     socket.on('disconnect', function (){
         console.log('a user is disconnected');
     });
@@ -15,7 +24,6 @@ io.on('connection', function(socket){
         console.log('message recu : ' + msg);
         io.emit('chat message', msg);
     });
-
 });
 
 http.listen(3000, function(){
