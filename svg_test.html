@@ -7,8 +7,7 @@
 
 <body>
 
-  <div id="container"></div>
-
+  <div id="container" style="border: solid 1px black; width: 1000px; height: 1000px"></div>
 
   <script type="text/javascript">
 
@@ -16,6 +15,15 @@
       var svgNS = "http://www.w3.org/2000/svg";
       return this.createElementNS(svgNS, tagName);
     };
+
+    var init = function (size) {
+      var pion = document.createSvg("cirle");
+      pion.setAttribute("cx", 10)
+      pion.setAttribute("cy", 10)
+      pion.setAttribute("r", size)
+      pion.setAttribute("fill", "grey")
+      return pion;
+    }
 
     var grid = function (numberPerSide, size, pixelsPerSide, colors) {
       var svg = document.createSvg("svg");
@@ -35,7 +43,10 @@
           box.setAttribute("height", size);
           box.setAttribute("fill", color1);
           box.setAttribute("id", "b" + number);
+          box.appendChild(init(size));
+
           g.appendChild(box);
+
           svg.appendChild(g);
         }
       }
@@ -43,11 +54,10 @@
     };
 
     var container = document.getElementById("container");
-    container.appendChild(grid(10, 10, 800, ["black", "white"]));
+    container.appendChild(grid(10, 5, 1000, ["brown", "white"]));
 
 
   </script>
-
 
 
 
