@@ -2,12 +2,13 @@
 <html>
 
 <head>
+  <link href="style.css" rel="stylesheet">
   <h1>Prototype</h1>
 </head>
 
 <body>
 
-  <div id="container" style="border: solid 1px black; width: 1000px; height: 1000px"></div>
+  <div id="container" style="border: solid 1px black; width: 45vw; height: 45vw"></div>
 
   <script type="text/javascript">
 
@@ -16,37 +17,56 @@
       return this.createElementNS(svgNS, tagName);
     };
 
-    var init = function (size) {
-      var pion = document.createSvg("cirle");
-      pion.setAttribute("cx", 10)
-      pion.setAttribute("cy", 10)
-      pion.setAttribute("r", size)
-      pion.setAttribute("fill", "grey")
-      return pion;
-    }
-
+    
     var grid = function (numberPerSide, size, pixelsPerSide, colors) {
       var svg = document.createSvg("svg");
-      svg.setAttribute("width", pixelsPerSide);
-      svg.setAttribute("height", pixelsPerSide);
+      svg.setAttribute("width", 45 +"vw");
+      svg.setAttribute("height", 45 +"vw");
+      svg.setAttribute("id", "MySvg");
       svg.setAttribute("viewBox", [0, 0, numberPerSide * size, numberPerSide * size].join(" "));
-
+      svg.setAttribute("preserveAspectRatio","xMidYMid meet");
+      let numPionJoueurB = 1;
+      let numPionJoueurA = 20;
       for (var i = 0; i < numberPerSide; i++) {
         for (var j = 0; j < numberPerSide; j++) {
           var color1 = colors[(i + j) % colors.length];
-          var color2 = colors[(i + j + 1) % colors.length];
           var g = document.createSvg("g");
-          g.setAttribute("transform", ["translate(", i * size, ",", j * size, ")"].join(""));
+          g.setAttribute("transform", ["translate(", j * size, ",", i * size, ")"].join(""));
           var number = numberPerSide * i + j;
           var box = document.createSvg("rect");
           box.setAttribute("width", size);
           box.setAttribute("height", size);
           box.setAttribute("fill", color1);
           box.setAttribute("id", "b" + number);
-          box.appendChild(init(size));
-
           g.appendChild(box);
+          
+          //pions joueur A
+          if(color1 =="brown" && i<4){
+            let pion = document.createSvg("circle");
+            pion.setAttribute("cx",25);
+            pion.setAttribute("cy",25);
+            pion.setAttribute("r",20);
+            pion.setAttribute("fill","black");
+            pion.setAttribute("stroke","red")
+            pion.setAttribute("stroke-width",3);
+            pion.setAttribute("id", "P"+ numPionJoueurA + "-JA-" );
+            numPionJoueurA--;
+            g.appendChild(pion);
+          };
 
+          //pions joueur B
+          if(color1 =="brown" && (i<=9 && i>=6)){
+            let pion = document.createSvg("circle");
+            pion.setAttribute("cx",25);
+            pion.setAttribute("cy",25);
+            pion.setAttribute("r",20);
+            pion.setAttribute("fill","white");
+            pion.setAttribute("stroke","black");
+            pion.setAttribute("stroke-width",3);
+            pion.setAttribute("id","P"+ numPionJoueurB + "-JB-");
+            numPionJoueurB++;
+            g.appendChild(pion);
+          };
           svg.appendChild(g);
         }
       }
@@ -54,38 +74,10 @@
     };
 
     var container = document.getElementById("container");
-    container.appendChild(grid(10, 5, 1000, ["brown", "white"]));
-
-
+    container.appendChild(grid(10, 50, 1000, ["brown", "yellow"]));
+    
   </script>
-
-
-
-  <!-- width="100%" seulement quand width < xxxpx -->
-
-  <!--
-  <svg width="802" height="802" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
-        <rect width="80" height="80" fill="url(#smallGrid)" />
-        <path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1" />
-      </pattern>
-    </defs>
-
-    <rect width="100%" height="100%" fill="url(#grid)" />
-  </svg>
--->
 
 </body>
 
 </html>
-
-
-
-<!--
-  get width && height
-  for
-    for
-      carré x et carré y = width < height ? width/10 : height / 10
-
--->

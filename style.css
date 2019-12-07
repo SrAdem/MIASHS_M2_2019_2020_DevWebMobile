@@ -1,0 +1,10 @@
+body {
+    text-align: center;
+    background-color: lightgray;
+}
+
+#container {
+    background-image: url('images/marbre_noir.jpg');
+    display: inline-block;
+    padding: 20px;
+}
