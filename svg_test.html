@@ -12,6 +12,8 @@
 
   <script type="text/javascript">
 
+    /*initialisation du plateau*/
+   
     document.createSvg = function (tagName) {
       var svgNS = "http://www.w3.org/2000/svg";
       return this.createElementNS(svgNS, tagName);
@@ -20,8 +22,8 @@
     
     var grid = function (numberPerSide, size, pixelsPerSide, colors) {
       var svg = document.createSvg("svg");
-      svg.setAttribute("width", 45 +"vw");
-      svg.setAttribute("height", 45 +"vw");
+      svg.setAttribute("width", 45 + "vw");
+      svg.setAttribute("height", 45 + "vw");
       svg.setAttribute("id", "MySvg");
       svg.setAttribute("viewBox", [0, 0, numberPerSide * size, numberPerSide * size].join(" "));
       svg.setAttribute("preserveAspectRatio","xMidYMid meet");
@@ -30,16 +32,18 @@
       for (var i = 0; i < numberPerSide; i++) {
         for (var j = 0; j < numberPerSide; j++) {
           var color1 = colors[(i + j) % colors.length];
-          var g = document.createSvg("g");
-          g.setAttribute("transform", ["translate(", j * size, ",", i * size, ")"].join(""));
+         // var g = document.createSvg("g");
           var number = numberPerSide * i + j;
           var box = document.createSvg("rect");
           box.setAttribute("width", size);
           box.setAttribute("height", size);
           box.setAttribute("fill", color1);
-          box.setAttribute("id", "b" + number);
-          g.appendChild(box);
-          
+          if(color1 == "brown") box.setAttribute("onclick", "caseSelct(this.id)");
+          box.setAttribute("id", "Lig" + i + " Col" + j);
+          var translate = ["translate(", j * size, ",", i * size, ")"].join("");
+          box.setAttribute("transform", translate);
+          //g.appendChild(box);
+          svg.appendChild(box);
           //pions joueur A
           if(color1 =="brown" && i<4){
             let pion = document.createSvg("circle");
@@ -49,9 +53,11 @@
             pion.setAttribute("fill","black");
             pion.setAttribute("stroke","red")
             pion.setAttribute("stroke-width",3);
-            pion.setAttribute("id", "P"+ numPionJoueurA + "-JA-" );
+            pion.setAttribute("id","lig"+i+ " col"+j );
+            pion.setAttribute("onclick", "selectPion(this.id)");
+            pion.setAttribute("transform", translate);
             numPionJoueurA--;
-            g.appendChild(pion);
+            svg.appendChild(pion);
           };
 
           //pions joueur B
@@ -63,11 +69,13 @@
             pion.setAttribute("fill","white");
             pion.setAttribute("stroke","black");
             pion.setAttribute("stroke-width",3);
-            pion.setAttribute("id","P"+ numPionJoueurB + "-JB-");
+            pion.setAttribute("id","lig"+i+ " col"+j);
+            pion.setAttribute("transform", translate);
+            pion.setAttribute("onclick", "selectPion(this.id)");
             numPionJoueurB++;
-            g.appendChild(pion);
+            svg.appendChild(pion);
           };
-          svg.appendChild(g);
+          
         }
       }
       return svg;
@@ -75,7 +83,109 @@
 
     var container = document.getElementById("container");
     container.appendChild(grid(10, 50, 1000, ["brown", "yellow"]));
+
+    var plateau = [
+    [ 1 , 0 , 1 , 0 , 1 , 0 , 1 , 0, 1, 0 ],
+    [ 0 , 1 , 0 , 1 , 0 , 1 , 0 , 1, 0, 1 ],
+    [ 1 , 0 , 1 , 0 , 1 , 0 , 1 , 0, 1, 0 ],
+    [ 0 , 1 , 0 , 1 , 0 , 1 , 0 , 1, 0, 1 ],
+    [ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0, 0, 0 ],
+    [ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0, 0, 0 ],
+    [ 2 , 0 , 2 , 0 , 2 , 0 , 2 , 0, 2, 0 ],
+    [ 0 , 2 , 0 , 2 , 0 , 2 , 0 , 2, 0, 2 ],
+    [ 2 , 0 , 2 , 0 , 2 , 0 , 2 , 0, 2, 0 ],
+    [ 0 , 2 , 0 , 2 , 0 , 2 , 0 , 2, 0, 2 ]
+  ];
     
+    var elemClignote
+    var selectPion = function(idPion){
+        console.log(idPion);
+        if(elemClignote != undefined) elemClignote.removeAttribute("class");
+        var elemClick = document.getElementById(idPion);
+        elemClick.setAttribute("class", "pionActif");
+        elemClignote = elemClick;
+
+    }
+
+   
+    var caseSelct = function(idCell){
+      //case séléction (ligne, colonne)
+      console.log(idCell);
+      var ligne = parseInt(idCell.substring(3,idCell.indexOf(" ")));
+      var col = parseInt(idCell.substring(idCell.indexOf("l")+1,idCell.length));
+      console.log(col);
+      
+      //cordonnées de la case
+      var cell = document.getElementById(idCell);
+      var cordCell = cell.getAttribute("transform");
+      console.log("cordCell",cordCell);
+      var xCell = parseInt(cordCell.substring(10,cordCell.indexOf(',')));
+      console.log("xCell",xCell);
+      var yCell = parseInt(cordCell.substring(cordCell.indexOf(',')+1,cordCell.length-1));
+      console.log("yCell",yCell);
+     
+      //cordonnées de la case
+      var cordPionActif = elemClignote.getAttribute("transform");
+      console.log("cordPionActif",cordPionActif);
+      var xPion = parseInt(cordPionActif.substring(10,cordPionActif.indexOf(',')));
+      console.log("xpion", xPion);
+      var yPion = parseInt(cordPionActif.substring(cordPionActif.indexOf(',')+1,cordPionActif.length-1));
+      console.log("ypion", yPion);
+
+      //vérifier si y'a un pion sur la case 
+      var etatCase = plateau[ligne][col];
+      console.log("etatCase",etatCase);
+      //vérifier si y'a un pion sélictionné
+        if(elemClignote && etatCase == 0){
+          //vérifier si la case est libre
+            var fill = elemClignote.getAttribute("fill");
+         if(fill == "black" && yCell==yPion+50 && (xCell == xPion-50 || xCell == xPion+50)){
+              var numPion = elemClignote.getAttribute("id");
+              var stroke = elemClignote.getAttribute("stroke");
+              var pion = document.createSvg("circle");
+                pion.setAttribute("cx",25);
+                pion.setAttribute("cy",25);
+                pion.setAttribute("r",20);
+                pion.setAttribute("fill",fill);
+                pion.setAttribute("stroke",stroke)
+                pion.setAttribute("stroke-width",3);
+                pion.setAttribute("id", numPion );           
+                pion.setAttribute("onclick", "selectPion(this.id)");
+                pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                var svg = document.getElementById("MySvg");
+                svg.appendChild(pion);
+                svg.removeChild(elemClignote);
+                //mettre à jour le plateau
+                plateau[ligne][col] = 1;
+                plateau[yPion/50][xPion/50] = 0;
+            } 
+            if(fill == "white" && yCell==yPion-50 && (xCell == xPion-50 || xCell == xPion+50)){
+              var numPion = elemClignote.getAttribute("id");
+              var stroke = elemClignote.getAttribute("stroke");
+              var pion = document.createSvg("circle");
+                pion.setAttribute("cx",25);
+                pion.setAttribute("cy",25);
+                pion.setAttribute("r",20);
+                pion.setAttribute("fill",fill);
+                pion.setAttribute("stroke",stroke)
+                pion.setAttribute("stroke-width",3);
+                pion.setAttribute("id", numPion );           
+                pion.setAttribute("onclick", "selectPion(this.id)");
+                pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                var svg = document.getElementById("MySvg");
+                svg.appendChild(pion);
+                svg.removeChild(elemClignote);
+                //mettre à jour le plateau
+                plateau[ligne][col] = 2;
+                plateau[yPion/50][xPion/50] = 0;
+            } 
+            
+          }
+     }
+        
+       
+    
+
   </script>
 
 </body>

@@ -5,6 +5,26 @@ body {
 
 #container {
     background-image: url('images/marbre_noir.jpg');
+    margin-left: auto;
+    margin-right: auto;
     display: inline-block;
     padding: 20px;
 }
+
+#MySvg {
+    
+
+}
+
+.pionActif{
+    animation: clignoter 1s infinite;
+}
+
+@keyframes clignoter {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
