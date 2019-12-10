@@ -140,18 +140,22 @@
           //vérifier si la case est libre
             var fill = elemClignote.getAttribute("fill");
          if(fill == "black" && yCell==yPion+50 && (xCell == xPion-50 || xCell == xPion+50)){
-              var numPion = elemClignote.getAttribute("id");
+             
               var stroke = elemClignote.getAttribute("stroke");
               var pion = document.createSvg("circle");
+             
                 pion.setAttribute("cx",25);
                 pion.setAttribute("cy",25);
                 pion.setAttribute("r",20);
+               
                 pion.setAttribute("fill",fill);
                 pion.setAttribute("stroke",stroke)
                 pion.setAttribute("stroke-width",3);
-                pion.setAttribute("id", numPion );           
+                          
                 pion.setAttribute("onclick", "selectPion(this.id)");
                 pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                var id = "lig"+(yCell/50)+" col"+(xCell/50);
+                pion.setAttribute("id",id);
                 var svg = document.getElementById("MySvg");
                 svg.appendChild(pion);
                 svg.removeChild(elemClignote);
@@ -159,29 +163,154 @@
                 plateau[ligne][col] = 1;
                 plateau[yPion/50][xPion/50] = 0;
             } 
-            if(fill == "white" && yCell==yPion-50 && (xCell == xPion-50 || xCell == xPion+50)){
-              var numPion = elemClignote.getAttribute("id");
+            else if(fill == "white" && yCell==yPion-50 && (xCell == xPion-50 || xCell == xPion+50)){
+              
               var stroke = elemClignote.getAttribute("stroke");
               var pion = document.createSvg("circle");
+             
                 pion.setAttribute("cx",25);
                 pion.setAttribute("cy",25);
                 pion.setAttribute("r",20);
+                
                 pion.setAttribute("fill",fill);
                 pion.setAttribute("stroke",stroke)
                 pion.setAttribute("stroke-width",3);
-                pion.setAttribute("id", numPion );           
+                        
                 pion.setAttribute("onclick", "selectPion(this.id)");
                 pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                var id = "lig"+(yCell/50)+" col"+(xCell/50);
+                pion.setAttribute("id",id);
                 var svg = document.getElementById("MySvg");
                 svg.appendChild(pion);
                 svg.removeChild(elemClignote);
                 //mettre à jour le plateau
                 plateau[ligne][col] = 2;
                 plateau[yPion/50][xPion/50] = 0;
+                console.log( "case selection après :" + ligne +" "+ col,plateau[ligne][col]);
+                console.log( "case selection après :" + yPion/50 +" "+ xPion/50, plateau[yPion/50][xPion/50] );
             } 
+            /* joueur noir*/
+            else if(fill == "black" && yCell==yPion+100 && (xCell == xPion-100 || xCell == xPion+100)){
+
+                  if(xCell == xPion-100 && plateau[(yCell-50)/50][(xCell+50)/50] == 2){
+                    
+                    var stroke = elemClignote.getAttribute("stroke");
+                    var pion = document.createSvg("circle");
+                    pion.setAttribute("cx",25);
+                    pion.setAttribute("cy",25);
+                    pion.setAttribute("r",20);
+                    pion.setAttribute("fill",fill);
+                    pion.setAttribute("stroke",stroke)
+                    pion.setAttribute("stroke-width",3);        
+                    pion.setAttribute("onclick", "selectPion(this.id)");
+                    pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                    var id = "lig"+(yCell/50)+" col"+(xCell/50);
+                    pion.setAttribute("id",id);
+                    var svg = document.getElementById("MySvg");
+                    svg.appendChild(pion);
+                    svg.removeChild(elemClignote);
+                    //mettre à jour le plateau
+                    plateau[ligne][col] = 1;
+                    plateau[yPion/50][xPion/50] = 0;
+                    var id = "lig"+(yCell-50)/50+" col"+(xCell+50)/50;
+                    console.log("id ",id)
+                    var elementAdver = document.getElementById(id);
+                    console.log(elementAdver);
+                    svg.removeChild(elementAdver);
+                    plateau[(yCell-50)/50][(xCell+50)/50] = 0;
+
+                  }
+                  else if(xCell == xPion+100 && plateau[(yCell-50)/50][(xCell-50)/50] == 2){
+                    var stroke = elemClignote.getAttribute("stroke");
+                    var pion = document.createSvg("circle");
+                    pion.setAttribute("cx",25);
+                    pion.setAttribute("cy",25);
+                    pion.setAttribute("r",20);
+                    pion.setAttribute("fill",fill);
+                    pion.setAttribute("stroke",stroke)
+                    pion.setAttribute("stroke-width",3);        
+                    pion.setAttribute("onclick", "selectPion(this.id)");
+                    pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                    var idPion = "lig"+(yCell/50)+" col"+(xCell/50);
+                    pion.setAttribute("id",idPion);
+                    var svg = document.getElementById("MySvg");
+                    svg.appendChild(pion);
+                    svg.removeChild(elemClignote);
+                    //mettre à jour le plateau
+                    plateau[ligne][col] = 1;
+                    plateau[yPion/50][xPion/50] = 0;
+                    var idPionAdv = "lig"+(yCell-50)/50+" col"+(xCell-50)/50;
+                    console.log("id ",idPionAdv)
+                    var elementAdver = document.getElementById(idPionAdv);
+                    console.log(elementAdver);
+                    svg.removeChild(elementAdver);
+                    plateau[(yCell-50)/50][(xCell-50)/50] = 0;
+
+                  }
+            }
+             /* joueur blanc*/
+            else if(fill == "white" && yCell==yPion-100 && (xCell == xPion-100 || xCell == xPion+100)){
+
+                  if(xCell == xPion-100 && plateau[(yCell+50)/50][(xCell+50)/50] == 1){
+                    
+                    var stroke = elemClignote.getAttribute("stroke");
+                    var pion = document.createSvg("circle");
+                    pion.setAttribute("cx",25);
+                    pion.setAttribute("cy",25);
+                    pion.setAttribute("r",20);
+                    pion.setAttribute("fill",fill);
+                    pion.setAttribute("stroke",stroke)
+                    pion.setAttribute("stroke-width",3);        
+                    pion.setAttribute("onclick", "selectPion(this.id)");
+                    pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                    var id = "lig"+(yCell/50)+" col"+(xCell/50);
+                    pion.setAttribute("id",id);
+                    var svg = document.getElementById("MySvg");
+                    svg.appendChild(pion);
+                    svg.removeChild(elemClignote);
+                    //mettre à jour le plateau
+                    plateau[ligne][col] = 2;
+                    plateau[yPion/50][xPion/50] = 0;
+                    var id = "lig"+(yCell+50)/50+" col"+(xCell+50)/50;
+                    console.log("id ",id)
+                    var elementAdver = document.getElementById(id);
+                    console.log(elementAdver);
+                    svg.removeChild(elementAdver);
+                    plateau[(yCell+50)/50][(xCell+50)/50] = 0;
+
+                  }
+                  else if(xCell == xPion+100 && plateau[(yCell+50)/50][(xCell-50)/50] == 1){
+                    var stroke = elemClignote.getAttribute("stroke");
+                    var pion = document.createSvg("circle");
+                    pion.setAttribute("cx",25);
+                    pion.setAttribute("cy",25);
+                    pion.setAttribute("r",20);
+                    pion.setAttribute("fill",fill);
+                    pion.setAttribute("stroke",stroke)
+                    pion.setAttribute("stroke-width",3);        
+                    pion.setAttribute("onclick", "selectPion(this.id)");
+                    pion.setAttribute("transform", "translate("+ xCell +","+ yCell +")");
+                    var idPion = "lig"+(yCell/50)+" col"+(xCell/50);
+                    pion.setAttribute("id",idPion);
+                    var svg = document.getElementById("MySvg");
+                    svg.appendChild(pion);
+                    svg.removeChild(elemClignote);
+                    //mettre à jour le plateau
+                    plateau[ligne][col] = 2;
+                    plateau[yPion/50][xPion/50] = 0;
+                    var idPionAdv = "lig"+(yCell+50)/50+" col"+(xCell-50)/50;
+                    console.log("id ",idPionAdv)
+                    var elementAdver = document.getElementById(idPionAdv);
+                    console.log(elementAdver);
+                    svg.removeChild(elementAdver);
+                    plateau[(yCell+50)/50][(xCell-50)/50] = 0;
+
+                  }
+           
             
           }
-     }
+      }
+    }
         
        
     
