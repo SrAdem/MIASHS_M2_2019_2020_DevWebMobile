@@ -1,8 +1,4 @@
-class User { 
-    name="";
-    email="";
-    psw="";
-
+class User {
     constructor(name, email, psw) {
         this.name = name;
         this.email = email;

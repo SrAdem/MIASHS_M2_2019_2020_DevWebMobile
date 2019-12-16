@@ -1,11 +1,11 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var User = require('./model/user');
+var User = require('../model/user');
 
 
 app.get("/", function(req, res){
-    res.sendFile(__dirname + '/client/test.html');
+    res.sendFile('/home/dcissm2/sarrab/Bureau/master2/WebMobile/ProjetJeuDeDames/MIASHS_M2_2019_2020_DevWebMobile/client/test.html');
 });
 
 io.on('connection', function(socket){
