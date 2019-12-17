@@ -2,20 +2,20 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var User = require('../model/user');
-
-
+//var bcrypt = require('bcrypt');
+var users = [];
 app.get("/", function(req, res){
-    res.sendFile('/home/dcissm2/sarrab/Bureau/master2/WebMobile/ProjetJeuDeDames/MIASHS_M2_2019_2020_DevWebMobile/client/test.html');
+    res.sendFile(__dirname.slice(0,-7)+'client/authUser.html');
 });
 
 io.on('connection', function(socket){
     console.log('a user is connected');
 
 
-    socket.on('sign in', function (name, email, pwd) {
+    socket.on('user', function (name, email, pwd) {
         var u = new User(name, email, pwd);
         //add to BDD
-        io.emit('name', name);
+        io.emit('userRegistred', u);
     });
     socket.on('disconnect', function (){
         console.log('a user is disconnected');
