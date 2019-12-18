@@ -12,11 +12,20 @@ io.on('connection', function(socket){
     console.log('a user is connected');
 
 
-    socket.on('user', function (name, email, pwd) {
-        var u = new User(name, email, pwd);
-        //add to BDD
-        io.emit('userRegistred', u);
+    socket.on('addUser', function (name, email, pwd) {
+        users.push({
+            name: name,
+            email: email,
+            pwd: pwd
+        });
+        io.emit('userRegistred', users);
     });
+
+    socket.on('logged', function () {
+        io.emit('connected')
+    });
+
+
     socket.on('disconnect', function (){
         console.log('a user is disconnected');
     });
