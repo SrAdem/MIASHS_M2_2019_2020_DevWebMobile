@@ -4,7 +4,12 @@
   "description": "Projet de dame dans le cadre d'étude du Master MIASHS WIC et DCISS en deuxième année.",
   "main": "server.js",
   "dependencies": {
+    "body-parser": "^1.19.0",
+    "consolidate": "^0.15.1",
     "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "htmlspecialchars": "^1.0.5",
+    "mustache": "^3.2.0",
     "socket.io": "^2.3.0"
   }
 }

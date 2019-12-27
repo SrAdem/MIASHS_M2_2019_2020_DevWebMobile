@@ -22,11 +22,12 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1V7yXERPZbqRfwn5rVrMjpKGIAE" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/client/css" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -38,6 +39,9 @@
     <property name="settings.editor.selected.configurable" value="editor.preferences.import" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\home\Desktop\master2\webMobile\Projet M2\MIASHS_M2_2019_2020_DevWebMobile\client\css" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/serveur" />
     </key>
@@ -65,7 +69,10 @@
       <option name="presentableId" value="Default" />
       <updated>1576489082514</updated>
       <workItem from="1576489083654" duration="1445000" />
-      <workItem from="1576618471061" duration="3882000" />
+      <workItem from="1576618471061" duration="4616000" />
+      <workItem from="1576652942050" duration="3661000" />
+      <workItem from="1577211463491" duration="134000" />
+      <workItem from="1577223138675" duration="28272000" />
     </task>
     <servers />
   </component>
@@ -77,7 +84,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
