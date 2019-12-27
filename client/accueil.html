@@ -1,16 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
+  <link href="css/accueil.css" rel="stylesheet">
   <meta charset="UTF-8">
   <title>Jeu de dames</title>
+  }
 </head>
-<body align="center">
+
+<body>
 
   <h1>Collectif Métissé - Projet jeu de dames</h1>
   <h1>Page d'accueil</h1>
   <p color="black">Nom:{{user.name}}</p>
   <p color="black">Email: {{user.email}}</p>
-  <br/><br/>
   <a href="/deconnexion">Deconnexion</a>
+  <br/><br/>
+
+  <!-- Jeu de dame -->
+  <div id="container" style="border: solid 1px black; width: 45vw; height: 45vw"></div>
+  <div style="left: 500px; background-color: red"></div>
+  <script type="text/javascript" src="js/accueil.js"></script>
 </body>
 </html>
