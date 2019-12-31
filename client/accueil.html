@@ -16,9 +16,19 @@
   <a href="/deconnexion">Déconnexion</a>
   <br/><br/>
 
-  <!-- Jeu de dame -->
-  <div id="container" style="border: solid 1px black; width: 45vw; height: 45vw"></div>
-  <div style="left: 500px; background-color: red"></div>
+  <div>
+    <div id="infos">
+      <div id="readyPlayerOne" class="playerZone">
+        <b>{{user.name}}</b> 
+        <br/>
+        {{user.email}}
+      </div>
+      <div id="readyPlayerTwo" class="playerZone"></div>
+    </div>
+    <!-- Jeu de dame -->
+    <div id="container" style="border: solid 1px black; width: 45vw; height: 45vw"></div>
+  </div>
+
   <script>
     var token = "{{accessToken}}"
   </script>

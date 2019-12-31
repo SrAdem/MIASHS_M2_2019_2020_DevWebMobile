@@ -1,19 +1,24 @@
 var socket = io();
 socket.on('connect', function () {
-    console.log('Connection...');
-    socket.emit('authenticate', {token: token});
+  console.log('Connection...');
+  socket.emit('authenticate', {token: token});
 });
 
 socket.on('authenticated', function () {
-    console.log('Authenticated');
+  console.log('Authenticated');
 });
 
 socket.on('unauthorized', function (data) {
-    console.log('Unauthorized, error msg: ' + data.message);
+  console.log('Unauthorized, error msg: ' + data.message);
 });
 
 socket.on('disconnect', function () {
-    console.log('Disconnected');
+  console.log('Disconnected');
+});
+
+socket.on('secondPlayer', function(fplayer) {
+  document.getElementById("readyPlayerTwo").innerHTML = "<b>" 
+  + fplayer.name + "</b><br/>" + fplayer.email;
 });
 
 /*initialisation du plateau*/
