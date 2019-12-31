@@ -1,9 +1,16 @@
+require('dotenv').config();
+
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var User = require('../model/user.js');
 var htmlspecialchars = require('htmlspecialchars');
+var jwt = require('jsonwebtoken');
+var socketioJwt = require('socketio-jwt');
+var socket = require('socket.io');
+var io = socket.listen(http);
 
+app.use(express.json())
 /*Session utilisateur*/
 var session = require('express-session');
 var sessionOptions = {
@@ -56,9 +63,10 @@ app.post("/", function(req, res){
 
 //Accueil
 app.get("/accueil", function(req, res){
-    if(req.session.userId) {
-        var user = users.find(user => user.id === req.session.userId);
-        res.render('accueil.html', {user: user});
+    if(req.session.userId){
+        user = users.find(user => user.id === req.session.userId);
+        const accessToken = jwt.sign(user.id, process.env.ACCESS_TOKEN_SECRET);
+        res.render('accueil.html', {user: user, accessToken: accessToken});
     }else{
         res.redirect('/');
     }
@@ -93,7 +101,38 @@ app.post("/inscription", function(req, res){
             res.render("inscription.html", {message: "L'utilisateur existe déjà" });
         }
     }
-    res.render("inscription.html", {message: "Erreur d'inscription" });
+    else {
+        res.render("inscription.html", {message: "Erreur d'inscription" });
+    }
+});
+
+io.on('connection', socketioJwt.authorize({
+    secret: process.env.ACCESS_TOKEN_SECRET,
+    timeout: 15000
+}));
+
+var room = 0;
+var rooms = [];
+io.on('authenticated', function (socket) {
+    var token = socket.decoded_token;
+    console.log('authenticated: ' + token);
+
+    if( ! rooms[room] ) {
+        socket.join('room' + room);
+        rooms[room] = {};
+        rooms[room].room = room;
+        rooms[room].firstPlayer = token;
+    }
+    else if ( ! rooms[room].secondPlayer ) {
+        socket.join('room' + room);
+        rooms[room].secondPlayer = token;
+        room++;
+    }
+    console.log(rooms);
+
+    socket.on('disconnect', function(){
+        console.log('disconnected: ' + token);
+    })
 });
 
 http.listen(3000, function(){

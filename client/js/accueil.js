@@ -1,3 +1,21 @@
+var socket = io();
+socket.on('connect', function () {
+    console.log('Connection...');
+    socket.emit('authenticate', {token: token});
+});
+
+socket.on('authenticated', function () {
+    console.log('Authenticated');
+});
+
+socket.on('unauthorized', function (data) {
+    console.log('Unauthorized, error msg: ' + data.message);
+});
+
+socket.on('disconnect', function () {
+    console.log('Disconnected');
+});
+
 /*initialisation du plateau*/
 
 document.createSvg = function (tagName) {
