@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="css/jeuDame.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Jeu de dames</title>
+</head>
+
+<body>
+
+  <h1>Collectif Métissé - Projet jeu de dames</h1>
+  <h1>Page d'accueil</h1>
+  <p color="black">Nom:{{user.name}}</p>
+  <p color="black">Email: {{user.email}}</p>
+  <a href="/deconnexion">Déconnexion</a>
+  <br/><br/>
+
+  <div>
+    <div id="infos">
+      <div id="readyPlayerOne" class="playerZone">
+        <b>{{user.name}}</b> 
+        <br/>
+        {{user.email}}
+      </div>
+      <div id="readyPlayerTwo" class="playerZone"></div>
+    </div>
+    <!-- Jeu de dame -->
+    <div id="container" style="border: solid 1px black; width: 45vw; height: 45vw"></div>
+  </div>
+
+  <script>
+    var token = "{{accessToken}}"
+  </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="js/jeuDame.js"></script>
+</body>
+</html>

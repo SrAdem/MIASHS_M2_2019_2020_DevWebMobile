@@ -1,18 +1,22 @@
 require('dotenv').config();
 
+// express + socketio + jsonwebtoken
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var User = require('../model/userModel');
-var htmlspecialchars = require('htmlspecialchars');
 var jwt = require('jsonwebtoken');
 var socketioJwt = require('socketio-jwt');
 var socket = require('socket.io');
 var io = socket.listen(http);
 
+//database + secur
 var mongoose = require('mongoose');
-var User = mongoose.model('User');
-var bcrypt = require('bcrypt');
+require('./mongoCo');
+var bcrypt = require('bcryptjs');
+
+//Models
+var User = require('../model/userModel');
+
 
 app.use(express.json())
 /*Session utilisateur*/
@@ -42,51 +46,11 @@ var users = [{id: 1, name: "Abdoulaye SARR" , email: "dadsarr@hotmail.fr", passw
 /*Pour avoir accès aux données du corps de la requête*/
 app.use(express.urlencoded({ extended: true }));
 
-//Connexion
-app.get("/", function(req, res){
-    if(req.session.userId){
-        res.redirect('/accueil');
-    }else{
-        res.render('connexion.html');
-    }
-});
 
 var routes = require('./routes');
 routes(app);
 
-app.post("/", function(req, res){
-    var email = req.body.email;
-    var password = req.body.password;
-    if(email && password){
-        var user = users.find(user => user.email === email && user.password === password);
-        if(user){
-            req.session.userId = user.id;
-            res.redirect("/accueil");
-        }
-    }
-    res.render('connexion.html', {message: 'Email ou mot de passe incorrect'});
-});
-
-
-//Accueil
-app.get("/accueil", function(req, res){
-    if(req.session.userId){
-        user = users.find(user => user.id === req.session.userId);
-        const accessToken = jwt.sign(user.id, process.env.ACCESS_TOKEN_SECRET);
-        res.render('accueil.html', {user: user, accessToken: accessToken});
-    }else{
-        res.redirect('/');
-    }
-});
-
-//Déconnexion
-app.get("/deconnexion",  function(req, res){
-    if(req.session.userId){
-        req.session.destroy();
-    }
-    res.redirect("/");
-});
-
+/****************************** Socket ******************************/
 io.on('connection', socketioJwt.authorize({
     secret: process.env.ACCESS_TOKEN_SECRET,
     timeout: 15000

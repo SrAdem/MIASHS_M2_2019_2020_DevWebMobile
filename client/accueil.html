@@ -1,38 +1,37 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <link href="css/accueil.css" rel="stylesheet">
-  <meta charset="UTF-8">
-  <title>Jeu de dames</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Jeu de dames</title>
+    <script type="text/javascript" src="js/accueil.js"></script>
 </head>
-
 <body>
 
-  <h1>Collectif Métissé - Projet jeu de dames</h1>
-  <h1>Page d'accueil</h1>
-  <p color="black">Nom:{{user.name}}</p>
-  <p color="black">Email: {{user.email}}</p>
-  <a href="/deconnexion">Déconnexion</a>
-  <br/><br/>
-
-  <div>
-    <div id="infos">
-      <div id="readyPlayerOne" class="playerZone">
-        <b>{{user.name}}</b> 
-        <br/>
-        {{user.email}}
-      </div>
-      <div id="readyPlayerTwo" class="playerZone"></div>
+    <h1>Collectif Métissé - Projet jeu de dames</h1>
+    <h1>Page d'authentification</h1>
+    <p><spam style="color: red;"><b>{{ message }}</b></spam></p>
+    <div id="connexionDiv">
+        <form action="/login" method="post">
+            <p><input type="email" name="email" placeholder="Adresse e-mail" id="email" required></p>
+            <p><input type="password" name="password" placeholder="Mot de passe" id="password" required></p>
+            <p><input type="submit" name="submit" value="Connexion" id="submit"></p>
+        </form>
+        <div id="pour_inscrire">
+            <p onclick="inscriptionDiv()">Vous n'avez pas de compte? Cliquez ici pour vous inscrire</p>
+        </div>
     </div>
-    <!-- Jeu de dame -->
-    <div id="container" style="border: solid 1px black; width: 45vw; height: 45vw"></div>
-  </div>
 
-  <script>
-    var token = "{{accessToken}}"
-  </script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script type="text/javascript" src="js/accueil.js"></script>
+    <div id="inscriptionDiv">
+        <form action="/inscription" method="post">
+            <p><input type="text" name="name" placeholder="Nom" id="name" required></p>
+            <p><input type="email" name="email" placeholder="Adresse e-mail" id="email" required></p>
+            <p><input type="password" name="password" placeholder="Mot de passe" id="password" required></p>
+            <p><input type="submit" name="submit" value="S'inscrire" id="submit"></p>
+        </form>
+        <div id="pour_inscrire">
+            <p onclick="connexionDiv()">Vous avez déjà un compte? Se connecter</p>
+        </div>
+    </div>
 </body>
 </html>

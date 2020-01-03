@@ -9,7 +9,7 @@ class Database {
     }
 
     _connect() {
-        mongoose.connect('mongodb://'+serve+''+database, 
+        mongoose.connect('mongodb://'+serve+'/'+database, 
             {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
         .then(() => {
             console.log('la connexion à la bdd réussi.');

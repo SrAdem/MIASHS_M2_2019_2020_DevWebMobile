@@ -4,7 +4,7 @@
   "description": "Projet de dame dans le cadre d'étude du Master MIASHS WIC et DCISS en deuxième année.",
   "main": "server.js",
   "dependencies": {
-    "bcrypt": "^3.0.7",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "consolidate": "^0.15.1",
     "dotenv": "^8.2.0",
