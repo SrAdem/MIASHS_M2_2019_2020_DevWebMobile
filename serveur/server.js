@@ -3,12 +3,16 @@ require('dotenv').config();
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var User = require('../model/user.js');
+var User = require('../model/userModel');
 var htmlspecialchars = require('htmlspecialchars');
 var jwt = require('jsonwebtoken');
 var socketioJwt = require('socketio-jwt');
 var socket = require('socket.io');
 var io = socket.listen(http);
+
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
+var bcrypt = require('bcrypt');
 
 app.use(express.json())
 /*Session utilisateur*/
@@ -47,6 +51,9 @@ app.get("/", function(req, res){
     }
 });
 
+var routes = require('./routes');
+routes(app);
+
 app.post("/", function(req, res){
     var email = req.body.email;
     var password = req.body.password;
@@ -78,32 +85,6 @@ app.get("/deconnexion",  function(req, res){
         req.session.destroy();
     }
     res.redirect("/");
-});
-
-//Inscription
-app.get("/inscription", function(req, res){
-    res.render('inscription.html');
-});
-
-app.post("/inscription", function(req, res){
-    //On utilise htmlspecialchars pour éviter l'injection
-    var name = htmlspecialchars(req.body.name);
-    var email = htmlspecialchars(req.body.email);
-    var password = htmlspecialchars(req.body.password);
-    if(name && email && password){
-        var existe = users.some(user => user.email === email);
-        if(!existe){
-            var user = new User(users.length+1,name, email, password);
-            users.push(user);
-            req.session.userId = user.id;
-            res.redirect("/accueil");
-        }else{
-            res.render("inscription.html", {message: "L'utilisateur existe déjà" });
-        }
-    }
-    else {
-        res.render("inscription.html", {message: "Erreur d'inscription" });
-    }
 });
 
 io.on('connection', socketioJwt.authorize({
