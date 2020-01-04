@@ -51,7 +51,7 @@ exports.sign_in = function(req, res) {
                         res.status(401).json({ message: 'Authentication failed. Wrong password.' });
                     } else {
                         req.session.userId = user._id;
-                        const accessToken = jwt.sign(user.id, process.env.ACCESS_TOKEN_SECRET);
+                        const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
                         res.render('jeuDame.html', {user: user, accessToken: accessToken});
                     }
                 }
@@ -66,19 +66,10 @@ exports.jeuDame = function(req, res){
     console.log("dans le get /jeuDame");
     if(req.session.userId){
         User.findOne({_id : req.session.userId}, function(err, user) {
-            const accessToken = jwt.sign(user.id, process.env.ACCESS_TOKEN_SECRET);
+            const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
             res.render('jeuDame.html', {user: user, accessToken: accessToken});
         });
     }else{
         res.render('accueil.html');
     }
 };
-
-exports.loginRequired = function(req, res, next) {
-    if (req.user) {
-        next();
-    } else {
-        return res.status(401).json({ message: 'Unauthorized user!' });
-    }
-};
-  

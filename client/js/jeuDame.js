@@ -21,6 +21,10 @@ socket.on('secondPlayer', function(fplayer) {
   + fplayer.name + "</b><br/>" + fplayer.email;
 });
 
+function IWin(){
+  socket.emit('endGame');
+}
+
 /*initialisation du plateau*/
 
 document.createSvg = function (tagName) {

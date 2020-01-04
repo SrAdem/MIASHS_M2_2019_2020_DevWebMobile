@@ -4,7 +4,6 @@ require('dotenv').config();
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var jwt = require('jsonwebtoken');
 var socketioJwt = require('socketio-jwt');
 var socket = require('socket.io');
 var io = socket.listen(http);
@@ -15,7 +14,9 @@ require('./mongoCo');
 var bcrypt = require('bcryptjs');
 
 //Models
-var User = require('../model/userModel');
+require('../model/roomModel');
+require('../model/userModel');
+var Room = mongoose.model('Room');
 
 
 app.use(express.json())
@@ -38,15 +39,10 @@ var engine = require('consolidate');
 app.engine('html', engine.mustache);
 app.set('view engine', 'html');
 
-/*Liste des utilisateurs*/
-var users = [{id: 1, name: "Abdoulaye SARR" , email: "dadsarr@hotmail.fr", password:"toto"},
-              {id: 2, name: "Ibro SARR" , email: "ibrosarr@hotmail.fr", password:"titi"}
-            ];
-
 /*Pour avoir accès aux données du corps de la requête*/
 app.use(express.urlencoded({ extended: true }));
 
-
+/*Le routage*/
 var routes = require('./routes');
 routes(app);
 
@@ -56,47 +52,62 @@ io.on('connection', socketioJwt.authorize({
     timeout: 15000
 }));
 
-var room = 0;
+var currentRoom = 0;
 var rooms = [];
+var waitingList = [];
+
 io.on('authenticated', function (socket) {
-    var token = parseInt(socket.decoded_token);
-    console.log('connected: ' + token);
-    var myroom = rooms.find(room => (room.firstPlayer === token || room.secondPlayer === token) && room.state === true);
-    if(myroom) {
+    var mysocket = socket;
+    var mytoken = socket.decoded_token;
+    console.log('connected: ' + mytoken);
+
+    //On regarde si on est pas déjà sur une table
+    var myroom = rooms.find(room => (room.firstPlayer.id === mytoken.id || room.secondPlayer.id === mytoken.id));
+    if(myroom) { //On est déjà sur une table
         socket.join('room'+myroom.room);
         var splayer;
-        if(myroom.firstPlayer === parseInt(socket)){
-            splayer = users.find(user => user.id === myroom.secondPlayer);
+        if(myroom.firstPlayer === mytoken){
+            splayer = myroom.secondPlayer;
         }
         else {
-            splayer = users.find(user => user.id === myroom.firstPlayer);
+            splayer = myroom.firstPlayer;
         }
         socket.emit('secondPlayer', {name : splayer.name, email: splayer.email});
         console.log("Retour à la table");
     }
-    else if( (! rooms[room])) {
-        socket.join('room' + room);
-        rooms[room] = {};
-        rooms[room].room = room;
-        rooms[room].firstPlayer = token;
+    //Sinon, on se met dans la liste s'il n'y a personne à affronter
+    else if(waitingList.length === 0) {
+        waitingList.push({token : mytoken, socket : mysocket});
     }
-    else if ( ! rooms[room].secondPlayer && rooms[room].firstPlayer != token) {
-        var splayer = users.find(user => user.id === token);
-        socket.to('room'+room).emit('secondPlayer',{name : splayer.name, email : splayer.email});
-        socket.join('room' + room);
-        var fplayer = users.find(user => user.id === parseInt(rooms[room].firstPlayer));
-        socket.emit('secondPlayer', {name : fplayer.name, email: fplayer.email});
-        rooms[room].secondPlayer = token;
-        rooms[room].state = true;
-        room++;
-    }
+    //S'il y a quelqu'un à affronter
     else {
-        socket.join('room' + room);
+        //On fait en sorte que chaque joueur a acces aux informations de l'autre joueur et qu'ils entrent dans la même "room"
+        var otherPlayer = waitingList.pop();
+        otherPlayer.socket.emit('secondPlayer',{name : mytoken.name, email : mytoken.email});
+        otherPlayer.socket.join('room' + currentRoom);
+        mysocket.emit('secondPlayer',{name : otherPlayer.token.name, email : otherPlayer.token.email});
+        mysocket.join('room' + currentRoom);
+        //on enregistre la partie
+        rooms.push( {room : currentRoom, firstPlayer : otherPlayer.token, secondPlayer : mytoken} );
+        currentRoom++;
     }
-    myroom = room;
 
+    socket.on('endGame', function() {
+        var newRoom = new Room({room : myroom.room, firstPlayer : myroom.firstPlayer.id, secondPlayer : myroom.secondPlayer.id, winner : mytoken.id});
+        newRoom.save(function(err, user) {
+            if (err) {
+                return res.status(400).send({
+                    message: err
+                });
+            } else {
+                console.log("ok");
+            }
+        });
+        console.log(rooms.indexOf(myroom));
+    })
+    
     socket.on('disconnect', function(){
-        console.log('disconnected: ' + token);
+        console.log('disconnected: ' + mytoken);
     })
 });
 

@@ -15,7 +15,6 @@ module.exports = function(app) {
     //Connexion
     app.route("/")
         .get(function(req, res){
-            console.log("dans le get / : " + req.session.userId);
             if(req.session.userId){
                 res.redirect('/jeuDame');
             }else{
