@@ -38,7 +38,6 @@ exports.register = function(req, res, next) {
 };
 
 exports.sign_in = function(req, res) {
-    console.log("ici")
     var email = req.body.email;
     var password = req.body.password;
     if(email && password){
@@ -59,7 +58,19 @@ exports.sign_in = function(req, res) {
             });
     }
     else {
-        res.render('connexion.html', {message: 'Email ou mot de passe incorrect'});
+        res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
+    }
+};
+
+exports.jeuDame = function(req, res){
+    console.log("dans le get /jeuDame");
+    if(req.session.userId){
+        User.findOne({_id : req.session.userId}, function(err, user) {
+            const accessToken = jwt.sign(user.id, process.env.ACCESS_TOKEN_SECRET);
+            res.render('jeuDame.html', {user: user, accessToken: accessToken});
+        });
+    }else{
+        res.render('accueil.html');
     }
 };
 

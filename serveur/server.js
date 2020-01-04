@@ -60,6 +60,7 @@ var room = 0;
 var rooms = [];
 io.on('authenticated', function (socket) {
     var token = parseInt(socket.decoded_token);
+    console.log('connected: ' + token);
     var myroom = rooms.find(room => (room.firstPlayer === token || room.secondPlayer === token) && room.state === true);
     if(myroom) {
         socket.join('room'+myroom.room);

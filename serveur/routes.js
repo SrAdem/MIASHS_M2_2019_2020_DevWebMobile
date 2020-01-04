@@ -7,9 +7,11 @@ module.exports = function(app) {
     app.route('/inscription')
 		.post(user.register);
     
-    app.route('/login')
-        .post(user.sign_in);
+    app.route('/jeuDame')
+        .post(user.sign_in)
+        .get(user.jeuDame);
 
+    app.route('')
     //Connexion
     app.route("/")
         .get(function(req, res){
