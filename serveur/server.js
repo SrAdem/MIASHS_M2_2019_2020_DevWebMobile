@@ -7,7 +7,8 @@ var http = require('http').Server(app);
 var socketioJwt = require('socketio-jwt');
 var socket = require('socket.io');
 var io = socket.listen(http);
-
+var jwt = require('jsonwebtoken');
+var htmlspecialchars = require('htmlspecialchars');
 //database + secur
 var mongoose = require('mongoose');
 require('./mongoCo');
@@ -17,6 +18,7 @@ var bcrypt = require('bcryptjs');
 require('../model/roomModel');
 require('../model/userModel');
 var Room = mongoose.model('Room');
+var User = mongoose.model('User');
 
 
 app.use(express.json())
@@ -42,9 +44,97 @@ app.set('view engine', 'html');
 /*Pour avoir accès aux données du corps de la requête*/
 app.use(express.urlencoded({ extended: true }));
 
-/*Le routage*/
-var routes = require('./routes');
-routes(app);
+/*Gestion du routage*/
+//Connexion
+app.get('/', function(req, res)
+{
+    if(req.session.userId){
+        res.redirect('/jeuDame');
+    }else{
+        res.render('accueil.html');
+    }
+});
+
+//Inscription
+app.post('/inscription', function(req, res)
+{
+    //On utilise htmlspecialchars pour éviter l'injection
+    var name = htmlspecialchars(req.body.name);
+    var email = htmlspecialchars(req.body.email);
+    var password = htmlspecialchars(req.body.password);
+    if(name && email && password){
+        var test = User.findOne({email : email})
+            .then ((user) => {
+            if(user) {
+                return res.render("accueil.html", {message: "L'utilisateur existe déjà" });
+            }
+            else{
+                var newUser = new User(req.body);
+        newUser.password = bcrypt.hashSync(req.body.password, 10);
+        newUser.save(function(err, user) {
+            if (err) {
+                return res.status(400).send({
+                    message: err
+                });
+            } else {
+                user.hash_password = undefined;
+                return res.render("accueil.html", {message: "Compte crée avec succes !" });
+            }
+        });
+    }
+    });
+    }  else {
+        res.render("accueil.html", {message: "Erreur d'inscription" });
+    }
+});
+
+//Page de jeu
+app.get('/jeuDame', function(req, res)
+{
+    if(req.session.userId){
+        User.findOne({_id : req.session.userId}, function(err, user) {
+            const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
+            res.render('jeuDame.html', {user: user, accessToken: accessToken});
+        });
+    }else{
+        res.render('accueil.html');
+    }
+});
+
+app.post('/jeuDame', function(req, res)
+{
+    var email = htmlspecialchars(req.body.email);
+    var password = htmlspecialchars(req.body.password);
+    if(email && password){
+        User.findOne({email : email},
+            function(err, user) {
+                if (err) throw err;
+                if (!user) {
+                    res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
+                } else if (user) {
+                    if (!user.comparePassword(req.body.password)) {
+                        res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
+                    } else {
+                        req.session.userId = user._id;
+                        const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
+                        res.render('jeuDame.html', {user: user, accessToken: accessToken});
+                    }
+                }
+            });
+    }
+    else {
+        res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
+    }
+});
+
+//Déconnexion
+app.get('/deconnexion', function(req, res)
+{
+    if(req.session.userId){
+        req.session.destroy();
+    }
+    res.redirect("/");
+});
 
 /****************************** Socket ******************************/
 io.on('connection', socketioJwt.authorize({
