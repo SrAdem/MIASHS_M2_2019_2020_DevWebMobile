@@ -1,3 +1,4 @@
+/* Communication avec le serveur */
 var socket = io();
 socket.on('connect', function () {
   console.log('Connection...');
@@ -16,14 +17,54 @@ socket.on('disconnect', function () {
   console.log('Disconnected');
 });
 
-socket.on('secondPlayer', function(fplayer) {
-  document.getElementById("readyPlayerTwo").innerHTML = "<b>" 
-  + fplayer.name + "</b><br/>" + fplayer.email;
+/* Fonctions js de la page */
+
+//Chercher un joueur peut-être en attente de celui-ci
+function findGame() {
+  document.getElementById("search-player").setAttribute("style","display:block");
+  document.getElementById("result").setAttribute("style","display:none");
+  socket.emit('findGame');
+}
+
+//Le second joueur est présent, on affiche ce qu'il faut
+socket.on('secondPlayer', function(autherPlayer) {
+  document.getElementById("search-player").setAttribute("style","display:none");
+  document.getElementById("beforeGameButtons").setAttribute("style","display:none");
+  document.getElementById("inGameButtons").setAttribute("style", "display:block");
+  document.getElementById("container").setAttribute("style", "display:block");
+
+  var player2div = document.getElementById("readyPlayerTwo");
+  player2div.innerHTML = "<b>" + autherPlayer.name + "</b>";
+  player2div.setAttribute("style", "display:block");
 });
 
+//Mouvement gagnant
 function IWin(){
   socket.emit('endGame');
 }
+
+//Résultats
+socket.on('results', function(win) {
+  document.getElementById("beforeGameButtons").setAttribute("style","display:block");
+  document.getElementById("inGameButtons").setAttribute("style", "display:none");
+  document.getElementById("container").setAttribute("style", "display:none");
+  document.getElementById("readyPlayerTwo").setAttribute("style", "display:none");
+
+  console.log("in" + win );
+  var resultSpan = document.getElementById("result");
+  if(win) {
+    resultSpan.setAttribute("style","display:block; background-color:green");
+    resultSpan.innerHTML="Vous avez gagné !"; 
+  }
+  else {
+    resultSpan.setAttribute("style","display:block; background-color:red");
+    resultSpan.innerHTML="Vous avez Perdu :'("; 
+  }
+})
+
+//Retour à l'interface de base
+
+
 
 /*initialisation du plateau*/
 

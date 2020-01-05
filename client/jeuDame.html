@@ -8,21 +8,27 @@
 </head>
 
 <body>
-
-  <h1>Collectif Métissé - Projet jeu de dames</h1>
-  <h1>Page d'accueil</h1>
-  <p color="black">Nom:{{user.name}}</p>
-  <p color="black">Email: {{user.email}}</p>
-  <a href="/deconnexion">Déconnexion</a>
-  <button onclick="IWin()">J'ai gagné !</button>
-  <br/><br/>
-
   <div>
-    <div id="infos">
+    <div id="infos" style="top: 50%;">
       <div id="readyPlayerOne" class="playerZone">
-        <b>{{user.name}}</b> 
-        <br/>
-        {{user.email}}
+        <div>
+          <b>{{user.name}}</b><br/>
+        </div>
+        <div id="beforeGameButtons">
+          <form action="/deconnexion">
+            <button class="button" type="submit">Déconnexion</button>
+          </form>
+          <button class="button" onclick="findGame()">Jouer</button>
+          <span id="result"></span>
+        </div>
+        <div id="search-player">
+          <span>Recherche d'un joueur en cours</span><br/>
+          <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </div>
+        <div id="inGameButtons">
+          <button class="button" onclick="surrend()">Abandonner</button><br/>
+          <button class="button" onclick="IWin()">J'ai gagné !</button>
+        </div>
       </div>
       <div id="readyPlayerTwo" class="playerZone"></div>
     </div>

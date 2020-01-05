@@ -45,10 +45,10 @@ exports.sign_in = function(req, res) {
             function(err, user) {
                 if (err) throw err;
                 if (!user) {
-                    res.status(401).json({ message: 'Authentication failed. User not found.' });
+                    res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
                 } else if (user) {
                     if (!user.comparePassword(req.body.password)) {
-                        res.status(401).json({ message: 'Authentication failed. Wrong password.' });
+                        res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
                     } else {
                         req.session.userId = user._id;
                         const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
@@ -63,7 +63,6 @@ exports.sign_in = function(req, res) {
 };
 
 exports.jeuDame = function(req, res){
-    console.log("dans le get /jeuDame");
     if(req.session.userId){
         User.findOne({_id : req.session.userId}, function(err, user) {
             const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
