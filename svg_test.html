@@ -124,37 +124,41 @@
               count++;
               console.log("noir",tab.length);
               console.log("id: ",id);
-              for(var h=0; h<filsNoeud.length;h++){
+              
                 if(tab.length==1){
-                if((filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "black" && filsNoeud[h].getAttribute("id")!=id) || 
-                (filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)" && filsNoeud[h].getAttribute("id")!="Lig"+(i+2)+" Col"+(j+2) && filsNoeud[h].getAttribute("id")!="Lig"+(i+2)+" Col"+(j-2))){
+                  for(var h=0; h<filsNoeud.length;h++){
+                    if(filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "black" && filsNoeud[h].getAttribute("id")!=tab[0]){
+                        filsNoeud[h].removeAttribute("onclick");
+                        console.log("joueur1 if");
+                    }
+                    if(filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)" && ((filsNoeud[h].getAttribute("id")!="Lig"+(i+2)+" Col"+(j+2) && plateau[i+1][j+1]==2) ||
+                    (filsNoeud[h].getAttribute("id")!="Lig"+(i+2)+" Col"+(j-2) && plateau[i+1][j-1]==2))){
+                      filsNoeud[h].removeAttribute("onclick");
+                    }
+                  }
+                }else if(tab.length==2){
+                  for(var h=0; h<filsNoeud.length;h++){
+                  if(filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "black"){
                     filsNoeud[h].removeAttribute("onclick");
-                    console.log("joueur1 if");
-                }
-                }else{
-                 
-                  var ligCel_1 = parseInt(tab[0].substring(3, tab[0].indexOf(" ")));
-                  var colCel_1 = parseInt(tab[0].substring(8));
-                  var idCell_1 = "Lig"+(ligCel_1+2)+" Col"+(colCel_1);
+                  }
+                  if(filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)"){
+                      filsNoeud[h].removeAttribute("onclick");
+                    }
                   
-                  var ligCel_2 = parseInt(tab[1].substring(3, tab[1].indexOf(" ")));
-                  var colCel_2 = parseInt(tab[1].substring(8));
-                  var idCell_2 = "Lig"+(ligCel_2+2)+" Col"+(colCel_2);
-                  
-                  if((filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "black") || (filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)")){
-                    filsNoeud[h].removeAttribute("onclick");
-                }
-                  document.getElementById(tab[0]).setAttribute("onclick","selectPion(this.id)");
-                  document.getElementById(tab[1]).setAttribute("onclick","selectPion(this.id)");
-                  document.getElementById(idCell_1).setAttribute("onclick","caseSelct(this.id)");
-                  document.getElementById(idCell_2).setAttribute("onclick","caseSelct(this.id)");
+                   }
+                   document.getElementById(tab[0]).setAttribute("onclick","selectPion(this.id)");
+                   document.getElementById(tab[1]).setAttribute("onclick","selectPion(this.id)");
+                   document.getElementById("Lig"+(parseInt(tab[0].substring(3,4))+2)+" Col"+parseInt(tab[0].substring(8))).setAttribute("onclick","caseSelct(this.id)");
+                   document.getElementById("Lig"+(parseInt(tab[1].substring(3,4))+2)+" Col"+parseInt(tab[1].substring(8))).setAttribute("onclick","caseSelct(this.id)");
                 } 
-              }
+            
 
             }
 
            }
+           
         }
+       
       }
 
      if(joueur=="joueur2"){
@@ -167,66 +171,69 @@
               tab[count]=id;
               console.log("blanc",tab.length);
               count++;
-              console.log("id",id);
+              console.log("tab",tab);
              
-              for(var h=0; h<filsNoeud.length;h++){
+              
                 if(tab.length==1){
-                if((filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "white" && filsNoeud[h].getAttribute("id")!=id)||
-                (filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)" && filsNoeud[h].getAttribute("id")!="Lig"+(i-2)+" Col"+(j+2) && filsNoeud[h].getAttribute("id")!="Lig"+(i-2)+" Col"+(j-2))){
-                    filsNoeud[h].removeAttribute("onclick");
-                    console.log("joueur1 if");
-                }
+                  for(var h=0; h<filsNoeud.length;h++){
+                    if(filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "white" && filsNoeud[h].getAttribute("id")!=tab[0]){
+                        filsNoeud[h].removeAttribute("onclick");
+                        console.log("joueur1 if");
+                    }
+                    if(filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)" && ((filsNoeud[h].getAttribute("id")!="Lig"+(i-2)+" Col"+(j+2) && plateau[i-1][j+1]==1) ||
+                    (filsNoeud[h].getAttribute("id")!="Lig"+(i-2)+" Col"+(j-2) && plateau[i-1][j-1]==1))){
+                      filsNoeud[h].removeAttribute("onclick");
+                    }
+                  }
                 }else{
-                  var ligCel_1 = parseInt(tab[0].substring(3, tab[0].indexOf(" ")));
-                  var colCel_1 = parseInt(tab[0].substring(8));
-                  var idCell_1 = "Lig"+(ligCel_1-2)+" Col"+(colCel_1);
-                  
-                  var ligCel_2 = parseInt(tab[1].substring(3, tab[1].indexOf(" ")));
-                  var colCel_2 = parseInt(tab[1].substring(8));
-                  var idCell_2 = "Lig"+(ligCel_2-2)+" Col"+(colCel_2);
-
-                  if((filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "white") || (filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)")){
-                    filsNoeud[h].removeAttribute("onclick");
-                }
+                  for(var h=0; h<filsNoeud.length;h++){
+                      if(filsNoeud[h].getAttribute("onclick")=="selectPion(this.id)" &&  filsNoeud[h].getAttribute("fill") == "white"){
+                        filsNoeud[h].removeAttribute("onclick");
+                      }
+                      if(filsNoeud[h].getAttribute("onclick")=="caseSelct(this.id)"){
+                      filsNoeud[h].removeAttribute("onclick");
+                    }
+                  } 
                   document.getElementById(tab[0]).setAttribute("onclick","selectPion(this.id)");
                   document.getElementById(tab[1]).setAttribute("onclick","selectPion(this.id)");
-                  document.getElementById(idCell_1).setAttribute("onclick","caseSelct(this.id)");
-                  document.getElementById(idCell_2).setAttribute("onclick","caseSelct(this.id)");
                   
+                  document.getElementById("Lig"+(parseInt(tab[0].substring(3,4))-2)+" Col"+parseInt(tab[0].substring(8))).setAttribute("onclick","caseSelct(this.id)");
+                  document.getElementById("Lig"+(parseInt(tab[1].substring(3,4))-2)+" Col"+parseInt(tab[1].substring(8))).setAttribute("onclick","caseSelct(this.id)");
                 } 
-              }
+              
 
             }
           
            }
         }
+       
       }
-      
+       
     }
 
     
     var miseAjour = function(couleurPion){
       var noeud = document.getElementById("grille");
       var filsNoeud = noeud.childNodes;
-      var count = 0;
+      /*var count = 0;
       for(var k =0;k<filsNoeud.length;k++){
         if(filsNoeud[k].getAttribute("fill")=="brown" && filsNoeud[k].getAttribute("onclick")){
           count++;
         }
-      }
-      console.log("count",count);
+      }*/
+     
         if(couleurPion=="black"){
         for(var g =0;g<filsNoeud.length;g++){
           if(filsNoeud[g].getAttribute("fill")=="black"){
             filsNoeud[g].setAttribute("onclick", "selectPion(this.id)");
             
           }
-          else if(count<=2){
-            if(filsNoeud[g].getAttribute("fill")=="brown"){
+         
+           if(filsNoeud[g].getAttribute("fill")=="brown"){
               filsNoeud[g].setAttribute("onclick", "caseSelct(this.id)");
               
             }
-          }
+         
          }
         }
         else if (couleurPion=="white"){
@@ -236,12 +243,12 @@
             
           }
           
-          else if(count<=2){
-            if(filsNoeud[g].getAttribute("fill")=="brown"){
+         
+           if(filsNoeud[g].getAttribute("fill")=="brown"){
               filsNoeud[g].setAttribute("onclick", "caseSelct(this.id)");
               
             }
-          }
+         
          }
         }
     }
@@ -346,6 +353,7 @@
             joueurs[0]="joueur2";
             pionABouger(joueurs[0]);
             
+            
           }
         
 
@@ -363,6 +371,7 @@
           joueurs[0] = "joueur1";
           pionABouger(joueurs[0]);
           
+         
         }
         
         /*-------------déplacement avec point gagné  --------------*/
@@ -409,6 +418,7 @@
            
           joueurs[0]=gereTourJeu("black");
           pionABouger(joueurs[0]);
+          
           miseAjour("black");
            
           
@@ -456,6 +466,7 @@
           }
           joueurs[0]=gereTourJeu("white");
           pionABouger(joueurs[0]);
+         
           miseAjour("white");
          
           
