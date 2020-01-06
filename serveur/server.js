@@ -70,8 +70,8 @@ app.post('/inscription', function(req, res)
             }
             else{
                 var newUser = new User(req.body);
-        newUser.password = bcrypt.hashSync(req.body.password, 10);
-        newUser.save(function(err, user) {
+                newUser.password = bcrypt.hashSync(req.body.password, 10);
+                newUser.save(function(err, user) {
             if (err) {
                 return res.status(400).send({
                     message: err
@@ -154,23 +154,19 @@ io.on('authenticated', function (socket) {
     var myroom = rooms.find(room => (room.firstPlayer.token.id === mytoken.id || room.secondPlayer.token.id === mytoken.id));
     if(myroom) { //On est déjà sur une table
         //On se retrouve dans les rooms pour mettre à jour le token et la socken. !!!!! Utile si l'utilisateur refresh sa page et perd ces informations la.
+        var splayer;
         if (myroom.firstPlayer.token.id === mytoken.id) {
             myroom.firstPlayer.token = mytoken;
             myroom.firstPlayer.socket = mysocket;
+            splayer = myroom.secondPlayer;
         }
         else {
             myroom.secondPlayer.token = mytoken;
             myroom.secondPlayer.socket = mysocket;
+            splayer = myroom.firstPlayer;
         }
         //On re rejoint la room du jeu.
         socket.join('room'+myroom.room);
-        var splayer;
-        if(myroom.firstPlayer === mytoken){
-            splayer = myroom.secondPlayer;
-        }
-        else {
-            splayer = myroom.firstPlayer;
-        }
         socket.emit('secondPlayer', {name : splayer.token.name});
     }
 
@@ -199,7 +195,7 @@ io.on('authenticated', function (socket) {
         //Pour en extraire le token et la socket de l'autre joueur
         var otherPlayer = (myroom.firstPlayer.token === mytoken) ? myroom.secondPlayer : myroom.firstPlayer ;
         //On créer le résultat pour l'insérer dans la base de donnée
-        var newRoom = new Room({room : myroom.room, firstPlayer : myroom.firstPlayer.token.id, secondPlayer : myroom.secondPlayer.token.id, winner : mytoken.id});3
+        var newRoom = new Room({room : myroom.room, firstPlayer : myroom.firstPlayer.token.id, secondPlayer : myroom.secondPlayer.token.id, winner : mytoken.id});
         //On l'enregistre
         newRoom.save(function(err, user) {
             if (err) {
