@@ -395,4 +395,34 @@ var caseSelct = function (idCell) {
             console.log(joueurs[0]);
         }
     }
+   
+}
+
+
+var moveEffectuer = function(x,y, xd, yd){ 
+    selectPion("lig"+x+" col"+y);
+    caseSelct("Lig"+xd+" Col"+yd);
+    
+}
+
+var suppEvenementClick = function(){
+    var svgGrid = document.getElementById("grille");
+    var filsNoeud = svgGrid.childNodes;
+    for(var h=0; h<filsNoeud.length;h++){
+        if(filsNoeud[h].getAttribute("onclick")== "selectPion(this.id)"){
+            filsNoeud[h].removeAttribute("onclick");
+        }
+    }
+
+}
+
+var AjoutEvenementClick = function(){
+    var svgGrid = document.getElementById("grille");
+    var filsNoeud = svgGrid.childNodes;
+    for(var h=0; h<filsNoeud.length;h++){
+        if(filsNoeud[h].nodeName ="circle"){
+            filsNoeud[h].setAttribute("onclick", "selectPion(this.id)");
+        }
+    }
+
 }
