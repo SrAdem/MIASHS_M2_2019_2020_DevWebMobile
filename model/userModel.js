@@ -3,6 +3,9 @@ var bcrypt = require('bcryptjs');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+/**
+ * Un utilisateur est un nom, son email (unique) qui sert aussi d'identifiant et son mot de passe. 
+ */
 var UserSchema = new Schema({
     name: {
         type : String,

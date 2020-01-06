@@ -38,6 +38,22 @@ socket.on('secondPlayer', function(autherPlayer) {
   player2div.setAttribute("style", "display:block");
 });
 
+//Mouvement
+function move(id) {
+  caseSelct(id);
+  socket.emit('movePion', selectedPion, id);
+  suppEvenementClick();
+  console.log("move");
+}
+
+//Recois un mouvment
+socket.on('receiveMove', function(selectedPion, destination) {
+  console.log(selectedPion, destination);
+  moveEffectuer(selectedPion, destination);
+  AjoutEvenementClick();
+  console.log("receiveMove");
+})
+
 //Mouvement gagnant
 function IWin(){
   socket.emit('endGame');

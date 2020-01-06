@@ -6,11 +6,12 @@
     <title>Jeu de dames</title>
     <script type="text/javascript" src="js/accueil.js"></script>
 </head>
-<body>
+<body onload="loadPage({{inscription}})"> <!-- permet d'afficher soit la partie identification soit la partie inscription -->
 
     <h1>Collectif Métissé - Projet jeu de dames</h1>
     <h1>Page d'authentification</h1>
     <p><spam style="color: red;"><b>{{ message }}</b></spam></p>
+    <!-- Partie Connexion -->
     <div id="connexionDiv">
         <form action="/jeuDame" method="post">
             <p><input type="email" name="email" placeholder="Adresse e-mail" id="email" required></p>
@@ -22,6 +23,7 @@
         </div>
     </div>
 
+    <!-- Partie Inscription -->
     <div id="inscriptionDiv">
         <form action="/inscription" method="post">
             <p><input type="text" name="name" placeholder="Nom" id="name" required></p>

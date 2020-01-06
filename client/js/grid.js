@@ -65,7 +65,7 @@ var grid = function (size, colors) {
             box.setAttribute("height", size);
             box.setAttribute("fill", color);
 
-            if (color == "brown") box.setAttribute("onclick", "caseSelct(this.id)");
+            if (color == "brown") box.setAttribute("onclick", "move(this.id)");
             box.setAttribute("id", "Lig" + i + " Col" + j);
             var translate = ["translate(", j * size, ",", i * size, ")"].join("");
             box.setAttribute("transform", translate);

@@ -10,10 +10,12 @@
 <body>
   <div>
     <div id="infos" style="top: 50%;">
+      <!-- Div de l'utilisateur -->
       <div id="readyPlayerOne" class="playerZone">
         <div>
           <b>{{user.name}}</b><br/>
         </div>
+        <!-- Bouttons pour lancer la partie ou se déconnecter -->
         <div id="beforeGameButtons">
           <form action="/deconnexion">
             <button class="button" type="submit">Déconnexion</button>
@@ -21,15 +23,18 @@
           <button class="button" onclick="findGame()">Jouer</button>
           <span id="result"></span>
         </div>
+        <!-- Recherche -->
         <div id="search-player">
           <span>Recherche d'un joueur en cours</span><br/>
           <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
+        <!-- Bouttons pour abandonner ou se déconnecter TODO -->
         <div id="inGameButtons">
           <button class="button" onclick="surrend()">Abandonner</button><br/>
           <button class="button" onclick="IWin()">J'ai gagné !</button>
         </div>
       </div>
+      <!-- Div de l'adversaire de l'utilisateur -->
       <div id="readyPlayerTwo" class="playerZone"></div>
     </div>
     <!-- Jeu de dame -->
@@ -40,8 +45,8 @@
     var token = "{{accessToken}}"
   </script>
   <script src="/socket.io/socket.io.js"></script>
-  <script type="text/javascript" src="js/jeuDame.js"></script>
   <script type="text/javascript" src="js/grid.js"></script>
   <script type="text/javascript" src="js/game.js"></script>
+  <script type="text/javascript" src="js/jeuDame.js"></script>
 </body>
 </html>

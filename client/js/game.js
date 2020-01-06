@@ -228,9 +228,9 @@ var gereTourJeu = function (couleurPion) {
     }
 }
 
-
+var selectedPion;
 var selectPion = function (idPion) {
-
+    selectedPion = idPion;
     var elemClick = document.getElementById(idPion);
     var couleurPion = elemClick.getAttribute("fill");
 
@@ -399,10 +399,9 @@ var caseSelct = function (idCell) {
 }
 
 
-var moveEffectuer = function(x,y, xd, yd){ 
-    selectPion("lig"+x+" col"+y);
-    caseSelct("Lig"+xd+" Col"+yd);
-    
+var moveEffectuer = function(start, end){ 
+    selectPion(start);
+    caseSelct(end);
 }
 
 var suppEvenementClick = function(){
