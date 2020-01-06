@@ -60,7 +60,7 @@ function IWin(){
 }
 
 //Résultats
-socket.on('results', function(win) {
+socket.on('results', function(win, partiesGagnes) {
   document.getElementById("beforeGameButtons").setAttribute("style","display:block");
   document.getElementById("inGameButtons").setAttribute("style", "display:none");
   document.getElementById("container").setAttribute("style", "display:none");
@@ -68,8 +68,10 @@ socket.on('results', function(win) {
 
   console.log("in" + win );
   var resultSpan = document.getElementById("result");
+  var resultPartiesGagnes =  document.getElementById("partiesgagnes"); //On récupère l'élément span créé dans le html
   if(win) {
     resultSpan.setAttribute("style","display:block; background-color:green");
+    resultPartiesGagnes.innerText = partiesGagnes; // On remplace son texte par le nombre de parties gagnées
     resultSpan.innerHTML="Vous avez gagné !"; 
   }
   else {

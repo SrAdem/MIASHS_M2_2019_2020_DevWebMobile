@@ -22,6 +22,11 @@ var UserSchema = new Schema({
     password: {
         type : String,
         required : true,
+    },
+    nbgagnes: {
+        type : Number,
+        trim : true,
+        required : true
     }
   });
 

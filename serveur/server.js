@@ -71,6 +71,8 @@ app.post('/inscription', function(req, res)
             }
             else{ //Sinon on l'ajoute à la base de donnée en lui indiquant que son compté à bien était crée.
                 var newUser = new User(req.body);
+                //On initialise le nombre de parties gagnées à 0 quand le user s'inscrit
+                newUser.nbgagnes = 0;
                 newUser.password = bcrypt.hashSync(req.body.password, 10); //On crypte son mot de passe pour la base de donnée.
                 newUser.save(function(err, user) {
             if (err) {
@@ -94,7 +96,8 @@ app.get('/jeuDame', function(req, res)
 {
     if(req.session.userId){
         User.findOne({_id : req.session.userId}, function(err, user) {
-            const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
+            //On stocke dans le jeton le nombre de parties gagnés par le user
+            const accessToken = jwt.sign({id : user.id, name : user.name, nbgagnes : user.nbgagnes}, process.env.ACCESS_TOKEN_SECRET);
             res.render('jeuDame.html', {user: user, accessToken: accessToken});
         });
     }else{
@@ -118,7 +121,7 @@ app.post('/jeuDame', function(req, res)
                     } else { //Si tout est correcte alors on connecte l'utilisateur.
                         req.session.userId = user._id;
                         //On envoie au serveur les donnée de l'utilisateur pour qu'il n'ai pas à faire plusieurs requete.
-                        const accessToken = jwt.sign({id : user.id, name : user.name, email : user.email}, process.env.ACCESS_TOKEN_SECRET);
+                        const accessToken = jwt.sign({id : user.id, name : user.name, nbgagnes : user.nbgagnes}, process.env.ACCESS_TOKEN_SECRET);
                         res.render('jeuDame.html', {user: user, accessToken: accessToken});
                     }
                 }
@@ -193,9 +196,9 @@ io.on('authenticated', function (socket) {
         else {
             //On fait en sorte que chaque joueur a acces aux informations de l'autre joueur et qu'ils entrent dans la même "room"
             var otherPlayer = waitingList.pop();
-            otherPlayer.socket.emit('secondPlayer',{name : mytoken.name, email : mytoken.email});
+            otherPlayer.socket.emit('secondPlayer',{name : mytoken.name, nbgagnes : mytoken.nbgagnes});
             otherPlayer.socket.join('room' + currentRoom);
-            mysocket.emit('secondPlayer',{name : otherPlayer.token.name, email : otherPlayer.token.email});
+            mysocket.emit('secondPlayer',{name : otherPlayer.token.name, nbgagnes : otherPlayer.token.nbgagnes});
             mysocket.join('room' + currentRoom);
             //on enregistre la partie dans la liste des "rooms", parties en cours.
             rooms.push( {room : currentRoom, firstPlayer : otherPlayer, secondPlayer : {token : mytoken, socket : mysocket} } );
@@ -222,6 +225,7 @@ io.on('authenticated', function (socket) {
         //Pour en extraire le token et la socket de l'autre joueur
         var otherPlayer = (myroom.firstPlayer.token === mytoken) ? myroom.secondPlayer : myroom.firstPlayer ;
         //On créer le résultat pour l'insérer dans la base de donnée
+        mytoken.nbgagnes = mytoken.nbgagnes + 1; //Si l'un des joueurs gagne, on ajoute 1 à sa nbre de parties gagnées
         var newRoom = new Room({room : myroom.room, firstPlayer : myroom.firstPlayer.token.id, secondPlayer : myroom.secondPlayer.token.id, winner : mytoken.id});
         //On l'enregistre dans la base de donnée
         newRoom.save(function(err, room) {
@@ -229,7 +233,7 @@ io.on('authenticated', function (socket) {
                 console.log("erreur d'insertion des résultats !!");
             } else {
                 //Et on affiche les résultats aux utilisateurs
-                mysocket.emit("results", true);
+                mysocket.emit("results", true, mytoken.nbgagnes); //On transfet au client le nombre de parties gagnées du joueur
                 otherPlayer.socket.emit("results", false);
             }
         });

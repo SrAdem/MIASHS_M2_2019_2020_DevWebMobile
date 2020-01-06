@@ -27,7 +27,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../DamesNodejs/AwsDame" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -77,6 +77,7 @@
       <workItem from="1577475658261" duration="812000" />
       <workItem from="1578249001111" duration="978000" />
       <workItem from="1578257321494" duration="6925000" />
+      <workItem from="1578346836141" duration="1308000" />
     </task>
     <servers />
   </component>
