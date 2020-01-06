@@ -55,6 +55,10 @@ body{
   display: none;
 }
 
+.caseJouable {
+  filter: opacity(75%);
+}
+
 .pionActif{
   animation: clignoter 1s infinite;
 }
