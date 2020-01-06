@@ -5,10 +5,11 @@ body {
 
 #container {
     background-image: url('images/marbre_noir.jpg');
-    margin-left: auto;
-    margin-right: auto;
-    display: inline-block;
     padding: 20px;
+    border: solid 1px black;
+    width: 85vmin;
+    height: 85vmin;
+    margin: auto;
 }
 
 #MySvg {
@@ -16,8 +17,13 @@ body {
 
 }
 
+.caseJouable {
+  filter: opacity(75%);
+}
+
 .pionActif{
-    animation: clignoter 1s infinite;
+    animation: clignoter 0.75s infinite;
+    filter: drop-shadow(  0px 0px 15px blue);
 }
 
 @keyframes clignoter {
@@ -25,6 +31,6 @@ body {
       opacity: 1;
     }
     50% {
-      opacity: 0;
+      opacity: 0.5;
     }
   }
