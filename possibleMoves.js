@@ -14,30 +14,25 @@ var movablePawn = function(player) {
     let addToPossibleMoveOfPawnWithEat = function (move) {
         if (move != null) possibleMoveOfPawnWithEat.push(move);
     }
-    
     for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
             //Si le pion est la couleur de pion de l'utilisateur (ou la dame du joueur)
             if(plateau[i][j] == playerID || plateau[i][j] == playerID +2 ) {
                 //On regarde s'il peut bouger
-                //ligne superieur
-                if(i!=0) {
-                    //Si un pion peut manger, pas la peine de calculer le déplacement simple d'un pion
-                    if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,-1,+1));
-                    //Calcule si un pion peut manger
-                    addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,-1,+1));
+                //Si un pion peut manger, pas la peine de calculer le déplacement simple d'un pion
+                if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,-1,+1));
+                //Calcule si un pion peut manger
+                addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,-1,+1));
 
-                    if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,-1,-1));
-                    addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,-1,-1));
-                }
-                //ligne inferieur
-                if(i!=9) {
-                    if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,+1,-1));
-                    addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,+1,-1));
+                if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,-1,-1));
+                addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,-1,-1));
+            
+                if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,+1,-1));
+                addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,+1,-1));
 
-                    if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,+1,+1));
-                    addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,+1,+1));
-                }
+                if(movablePawnEat.length == 0) addToPossibleMoveOfPawn(possibleMove(i,j,+1,+1));
+                addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,+1,+1));
+                
                 //Si un pion peut manger, on le garde, le reste on oublie, sinon on grade les mouvements simple.
                 if(possibleMoveOfPawnWithEat.length != 0) {
                     movablePawnEat.push({pawn : {i,j}, possibleMove : possibleMoveOfPawnWithEat});
@@ -64,14 +59,17 @@ var movablePawn = function(player) {
  * @param {int} jd : j à vérifier  (+1 ou -1)
  */
 var possibleMove = function(i,j,id,jd) {
-    let positionToCheck = plateau[i+id][j+jd]; // une position adjascente 
+    moveI = i + id;
+    moveJ = j + jd;
+    if(moveI < 0 || moveI > 9 || moveJ < 0 || moveJ > 9) return null; // Pour ne pas sortir de la limite
+    let positionToCheck = plateau[moveI][moveJ]; // une position adjascente 
     let pawn = plateau[i][j]; //contenu de la position de départ
 
     //Si on monte sur le plateau (id = -1) et que le pion est BLANC, on descend (id = +1) et que le pion est NOIR
     //ou que le pion est une dame alors on peut regarder la case si elle est libre ou non
     if( positionToCheck != undefined && positionToCheck == 0) {
         if ( (id < 0 && pawn == 1) || (id > 0 && pawn == 2) || pawn > 2) { 
-            return {i : i+id, j : j+jd};
+            return {i : moveI, j : moveJ};
         }
     }
     return null;
@@ -86,11 +84,16 @@ var possibleMove = function(i,j,id,jd) {
  * @param {int} jd : j pion adverse  (+1 ou -1)
  */
 var possibleMoveWithEat = function(playerID,i,j,id,jd) {
-    positionToCheck = plateau[i+id][j+jd]; // une position adjascente 
+    inext = i+id;
+    jnext = j+jd;
+    if(inext < 0 || inext > 9 || jnext < 0 || jnext > 9) return null;
+    positionToCheck = plateau[inext][jnext]; // une position adjascente 
     // position du pion adverse = plateau[i+ie][j+je]
     // donc position a vérifier : 
-    checkPositionI = i+id+id;
-    checkPositionJ = j+jd+jd;
+    checkPositionI = inext+id;
+    checkPositionJ = jnext+jd;
+    if(checkPositionI < 0 || checkPositionI > 9 || checkPositionJ < 0 || checkPositionJ > 9) return null; // Pour ne pas sortir de la limite
+    //Si la position verifié (+1) n'est pas un pion du joueur et que la position derrière (+2) est vide, alors le mouvement est possible
     if(positionToCheck != undefined && positionToCheck != playerID && positionToCheck != playerID+2 && positionToCheck != 0
         && plateau[checkPositionI][checkPositionJ] != undefined && plateau[checkPositionI][checkPositionJ] == 0) {
             return {i : checkPositionI, j : checkPositionJ}; //Si la position +2 est libre et que laposition +1 est un pion adverse alors on peut manger
@@ -98,19 +101,26 @@ var possibleMoveWithEat = function(playerID,i,j,id,jd) {
     return null;
 }
 
+/**
+ * 
+ * @param {String} player : si joueur 1 ou 2
+ * @param {int} i : position i du pion ayant mangé 
+ * @param {int} j : position j du pion ayant mangé
+ */
 var anotherMoveWithEat = function(player, i, j) {
     let playerID = (player == "Joueur1") ? 1 : 2 ;
     let movablePawnEat = []
     let possibleMoveOfPawnWithEat = [];
-    let addToPossibleMoveOfPawnWithEat = function (move) {
+    let addToPossibleMoveOfPawnWithEat = function (move) { //petite fonction pour ne pas inséré des éléments null
         if (move != null) possibleMoveOfPawnWithEat.push(move);
     }
     
-    //Calcule si un pion peut manger
+    //Calcule si le pion peut encore manger
     addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,-1,-1));
     addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,-1,+1));
     addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,+1,-1));
     addToPossibleMoveOfPawnWithEat(possibleMoveWithEat(playerID,i,j,+1,+1));
-    if(possibleMoveOfPawnWithEat.length != 0) movablePawnEat.push({ pawn : {i,j}, possibleMove : possibleMoveOfPawnWithEat});
+    // si oui on envoie un objet de même model que movablePawn()
+    if(possibleMoveOfPawnWithEat.length != 0) movablePawnEat.push({ pawn : {i,j}, possibleMove : possibleMoveOfPawnWithEat}); 
     return movablePawnEat;
 }

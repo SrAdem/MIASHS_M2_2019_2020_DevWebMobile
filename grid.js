@@ -37,8 +37,12 @@ document.createSvg = function (tagName) {
 var pionage = function (i, j) {
     //Attributs du pion
     var color;
-    if(plateau[i][j] == 1 || plateau[i][j] == 3) color = "white"
-    else if (plateau[i][j] == 2 || plateau[i][j] == 4) color = "black";
+    var dame;
+    var pos = plateau[i][j];
+
+    dame = (pos == 3 || pos == 4) ? true : false;
+    if(pos == 1 || pos == 3) color = "white"
+    else if (pos == 2 || pos == 4) color = "black";
 
     var pion = document.createSvg("circle");
     pion.setAttribute("cx", 25);
@@ -50,7 +54,9 @@ var pionage = function (i, j) {
 
     let stroke = (color == "black") ? "red" : "black";
     pion.setAttribute("stroke", stroke)
-    pion.setAttribute("stroke-width", 2);
+
+    if(dame) pion.setAttribute("stroke-width", 7);
+    else pion.setAttribute("stroke-width", 2);
 
     return pion;
 };
