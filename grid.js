@@ -1,3 +1,22 @@
+/* tableau représentant l'état du jeu
+    0: case vide    
+    1: pion blanc
+    2: pion noir 
+    3: reine blanche
+    4: reine noire
+*/
+var plateau = [
+    [-1, 2, -1, 2, -1, 2, -1, 2, -1, 2],
+    [2, -1, 2, -1, 2, -1, 2, -1, 2, -1],
+    [-1, 2, -1, 2, -1, 2, -1, 2, -1, 2],
+    [2, -1, 2, -1, 2, -1, 2, -1, 2, -1],
+    [-1, 0, -1, 0, -1, 0, -1, 0, -1, 0],
+    [0, -1, 0, -1, 0, -1, 0, -1, 0, -1],
+    [-1, 1, -1, 1, -1, 1, -1, 1, -1, 1],
+    [1, -1, 1, -1, 1, -1, 1, -1, 1, -1],
+    [-1, 1, -1, 1, -1, 1, -1, 1, -1, 1],
+    [1, -1, 1, -1, 1, -1, 1, -1, 1, -1],
+];
 
 /**
  * Fonction de création de svg.
@@ -12,36 +31,27 @@ document.createSvg = function (tagName) {
 /**
  * Fonction de création de pion
  * Translate facultatif
- * @param {string=} color 
- * @param {integer=} xPion 
- * @param {integer=} yPion 
- * @param {string=} translate 
+ * @param {int} i : position i du pion 
+ * @param {int} j : position j du pion
  */
-var pionage = function (color, xPion, yPion, translate) {
-    var pion = document.createSvg("circle");
+var pionage = function (i, j) {
+    //Attributs du pion
+    var color;
+    if(plateau[i][j] == 1 || plateau[i][j] == 3) color = "white"
+    else if (plateau[i][j] == 2 || plateau[i][j] == 4) color = "black";
 
+    var pion = document.createSvg("circle");
     pion.setAttribute("cx", 25);
     pion.setAttribute("cy", 25);
     pion.setAttribute("r", 20);
     pion.setAttribute("fill", color);
+    pion.setAttribute("id", "lig" + i + " col" + j);
+    pion.setAttribute("transform", "translate(" + j*50 + "," + i*50 + ")");
 
-    let stroke;
-    if (color == "black") {
-        stroke = "red";
-    } else {
-        stroke = "black";
-    }
-
+    let stroke = (color == "black") ? "red" : "black";
     pion.setAttribute("stroke", stroke)
     pion.setAttribute("stroke-width", 2);
-    pion.setAttribute("onclick", "selectPion(this.id)");
 
-    if (translate) {
-        pion.setAttribute("transform", translate);
-    } else {
-        pion.setAttribute("transform", "translate(" + xPion + "," + yPion + ")");
-    }
-    pionbouger = pion;
     return pion;
 };
 
@@ -49,52 +59,43 @@ var pionage = function (color, xPion, yPion, translate) {
  * Fonction de création de la grille.
  * Le paramètre size représente la taille d'une case en px
  * @param {integer=} size 
- * @param {string[2]=} colors 
  */
-var grid = function (size, colors) {
+var grid = function (size) {
     var svgGrid = document.createSvg("svg");
     svgGrid.setAttribute("id", "grille");
     svgGrid.setAttribute("viewBox", [0, 0, 10 * size, 10 * size].join(" "));
     svgGrid.setAttribute("preserveAspectRatio", "xMidYMid meet");    
+
     for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
-            var color = colors[(i + j) % 2];
-            var box = document.createSvg("rect");
-
-            box.setAttribute("width", size);
-            box.setAttribute("height", size);
-            box.setAttribute("fill", color);
-
-            if (color == "brown") box.setAttribute("onclick", "caseSelct(this.id)");
-            box.setAttribute("id", "Lig" + i + " Col" + j);
+            //Couleur plus forme de la case
+            var color = ((i + j) % 2) ? "brown" : "yellow";
+            var square = document.createSvg("rect");
+            //Tous les attributs de la case 
+            square.setAttribute("width", size);
+            square.setAttribute("height", size);
+            square.setAttribute("fill", color);
+            square.setAttribute("id", "Lig" + i + " Col" + j);
             var translate = ["translate(", j * size, ",", i * size, ")"].join("");
-            box.setAttribute("transform", translate);
-            svgGrid.appendChild(box);
+            square.setAttribute("transform", translate);
+            //ajout dans la grille
+            svgGrid.appendChild(square);
 
-            //pions joueur A
-            if (color == "brown" && i < 4) {
-                let pion = pionage("black", i, j, translate);
-                pion.setAttribute("id", "lig" + i + " col" + j);                
-                svgGrid.appendChild(pion);
-            };
+            //Evenement sur les cases cliquable
+            // if (plateau[i][j] >= 0) square.setAttribute("onclick", "caseSelct(this.id)");
 
-            //pions joueur B
-            if (color == "brown" && (i <= 9 && i >= 6)) {
-                let pion = pionage("white", i, j, translate);
-                pion.setAttribute("id", "lig" + i + " col" + j);               
+            //Pion noir
+            if(plateau[i][j]==1 || plateau[i][j]==2) {
+                let pion = pionage(i, j);           
                 svgGrid.appendChild(pion);
-            };
+            }
         }
     }
     return svgGrid;
 };
 
+
 /*initialisation du plateau*/
 var container = document.getElementById("container");
-container.appendChild(grid(50, ["yellow", "brown"]));
-
-/**
-* Fonction activable sur chaque pion de la couleur du joueur actif
-* Modifie l'elemClignote par celui cliqué
-* @param {string=} idPion 
-*/
+var gameGrid = grid(50)
+container.appendChild(gameGrid);
