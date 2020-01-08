@@ -53,7 +53,7 @@ var selectPawn = function (indexOfPawn) {
     pawn = movablePawnPlayer[indexOfPawn]; // On prend le pion choisi dans le tableau movablePawnPlayer
     let elemClick = document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j);
     //Pour faire clignoter le pion choisi
-    if (elemClignote != undefined) elemClignote.removeAttribute("class");
+    if (elemClignote != undefined) elemClignote.setAttribute("class", "pionsJouables");
     elemClick.setAttribute("class", "pionActif");
     elemClignote = elemClick;
 
