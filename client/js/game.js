@@ -60,8 +60,8 @@ var onlineGame = function (player) {
     initGame();
     joueur = player;
     localGame = false;
-    whitePlayerNbPawn = 1;
-    blackPlayerNbPawn = 1;
+    whitePlayerNbPawn = 20;
+    blackPlayerNbPawn = 20;
     if (joueur == "Joueur1") turnOf(joueur);
 }
 
