@@ -30,6 +30,7 @@ var endTurn = function() {
     }
     else if(localGame) {
         joueur = (joueur=="Joueur1")?"Joueur2":"Joueur1";
+        selectedPawn = undefined;
         turnOf(joueur);
     }
 }
