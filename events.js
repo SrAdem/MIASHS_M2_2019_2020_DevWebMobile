@@ -50,15 +50,16 @@ var cleanPawns = function () {
  * @param {int} indexOfPawn : index du pion dans la table
  */
 var selectPawn = function (indexOfPawn) {
-    pawn = movablePawnPlayer[indexOfPawn]; // On prend le pion choisi dans le tableau movablePawnPlayer
-    let elemClick = document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j);
+    newPawn = movablePawnPlayer[indexOfPawn]; // On prend le pion choisi dans le tableau movablePawnPlayer
     //Pour faire clignoter le pion choisi
-    if (elemClignote != undefined) elemClignote.removeAttribute("class");
-    elemClick.setAttribute("class", "pionActif");
-    elemClignote = elemClick;
-
+    if (selectedPawn != undefined) {
+        document.getElementById("lig"+ selectedPawn.pawn.i + " col" + selectedPawn.pawn.j).removeAttribute("class");
+        removeSquareEvents(selectedPawn);
+    }
+    document.getElementById("lig"+ newPawn.pawn.i + " col" + newPawn.pawn.j).setAttribute("class", "pionActif");
+    selectedPawn = newPawn;
+    
     cleanSquares();
-
     eventOnChoosableSquare(indexOfPawn); // On ajoute un évenement à toutes les cases où le pion peut aller.
 }
 
@@ -74,7 +75,7 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
     var eat = movePawn(pawn.pawn, move); // On bouge le pion
     cleanSquares();
     cleanPawns();
-    removeEvents(); // On supprime les évenement !
+    removePawnEvents(); // On supprime les évenement !
     if(eat != false) { //Si le pion a manger un autre pion alors 
         movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.
         console.log(movablePawnPlayer);
@@ -87,17 +88,25 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
 }
 
 /**
- * Fonction qui supprime tout les évenements
+ * Fonction qui supprime les évenements sur les pions
  */
-var removeEvents = function() {
+var removePawnEvents = function() {
     //Parcours toute la table des possibilitées et supprime l'évènement.
     movablePawnPlayer.forEach((pawn) => { //Chaque pion
         let pawnSVG = document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j);
         //Si c'est un pion qu'on a pas déplacé, on supprime son évenement
         if (pawnSVG != null) document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j).removeAttribute("onclick"); 
-        pawn.possibleMove.forEach((move) => { //On supprime tout les évents des cases
-            svg = document.getElementById("Lig" + move.i + " Col" + move.j).removeAttribute("onclick");
-        });
+        removeSquareEvents(pawn);
+    });
+}
+
+/**
+ * Supprime les évenements des cases lié au pion.
+ * @param {pawn} pawn 
+ */
+var removeSquareEvents = function(pawn) {
+    pawn.possibleMove.forEach((move) => { //On supprime tout les évents des mouvements possible d'un pion
+        svg = document.getElementById("Lig" + move.i + " Col" + move.j).removeAttribute("onclick");
     });
 }
 

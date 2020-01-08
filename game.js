@@ -1,5 +1,5 @@
 var joueur = "Joueur1"; // pour identifier le joueur en ligne ou pour changer de joueur en local
-var elemClignote; //garder une trace du pion qui a été séléctionner 
+var selectedPawn; //garder une trace du pion qui a été séléctionner
 var localGame; //Permet de savoir si on joue en local ou en ligne
 var movablePawnPlayer; //Contiendra tout les mouvement possible [ {pion , mouvements du pion}, {pion, mo...}, ...]
                             //                                      ||           ||
