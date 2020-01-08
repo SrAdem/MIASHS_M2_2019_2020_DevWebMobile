@@ -5,6 +5,7 @@ var eventOnChoosablePawn = function () {
     movablePawnPlayer.forEach((pawn, index) => {
         let svg = document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j);
         svg.setAttribute("onclick", "selectPawn("+index+")");
+        svg.setAttribute("class", "pionsJouables");
     });
 }
 
@@ -16,7 +17,32 @@ var eventOnChoosableSquare = function (indexOfPawn) {
     movablePawnPlayer[indexOfPawn].possibleMove.forEach( (move, index) => {
         let svg = document.getElementById("Lig" + move.i + " Col" + move.j);
         svg.setAttribute("onclick", "selectSquare(" + index + ", " + indexOfPawn + ")");
+        svg.setAttribute("class", "casesJouables");
     });
+}
+
+/**
+ * Retire toutes les class casesJouables
+ */
+var cleanSquares = function () {
+    var jouab = document.getElementsByClassName("casesJouables");
+    if (jouab.length > 0) {
+        while (jouab.length != 0) {
+            jouab[0].removeAttribute("class");
+        }
+    }
+}
+
+/**
+ * Retire toutes les class pionsJouables
+ */
+var cleanPawns = function () {
+    var jouab = document.getElementsByClassName("pionsJouables");
+    if (jouab.length > 0) {
+        while (jouab.length != 0) {
+            jouab[0].removeAttribute("class");
+        }
+    }
 }
 
 /**
@@ -31,6 +57,8 @@ var selectPawn = function (indexOfPawn) {
     elemClick.setAttribute("class", "pionActif");
     elemClignote = elemClick;
 
+    cleanSquares();
+
     eventOnChoosableSquare(indexOfPawn); // On ajoute un évenement à toutes les cases où le pion peut aller.
 }
 
@@ -44,6 +72,8 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
     pawn = movablePawnPlayer[indexOfPawn]; // On prend le pion choisi
     move = pawn.possibleMove[indexOfMove]; // On trouve la case sur laquel le joueur à clique sur le tableau de mouvement possible du pion
     var eat = movePawn(pawn.pawn, move); // On bouge le pion
+    cleanSquares();
+    cleanPawns();
     removeEvents(); // On supprime les évenement !
     if(eat != false) { //Si le pion a manger un autre pion alors 
         movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.

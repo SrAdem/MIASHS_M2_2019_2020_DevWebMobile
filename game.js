@@ -42,6 +42,7 @@ var localGame = function() {
     joueur = "Joueur1";
     whitePlayerNbPawn = 20;
     blackPlayerNbPawn = 20;
+    turnOf(joueur);
 }
 
 /**
