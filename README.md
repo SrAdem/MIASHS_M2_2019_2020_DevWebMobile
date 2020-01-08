@@ -13,3 +13,16 @@ Projet de dame dans le cadre d'étude du Master MIASHS WIC et DCISS en deuxième
 - Modification du responsive
 
 - Modification de l'effet des pions actifs
+
+## Installation
+
+ - Cloner le projet
+ ``` https://github.com/SrAdem/MIASHS_M2_2019_2020_DevWebMobile.git ```
+ - Se placer dans la branch dev (pour le moment)
+ ``` git checkout dev ```
+ - Installer les dépendances
+ ``` npm install ```
+ - Lancer Mongo
+ ``` mongod --dbpath PATH ```
+ - Lancer le serveur
+ ``` node serveur/serveur.js ```
