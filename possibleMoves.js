@@ -117,6 +117,7 @@ var possibleMoveWithEat = function(playerID,i,j,id,jd) {
  */
 var possibleMoveDame = function(playerID,pi,pj) {
     let dameMoves = []; //Les mouvements possible
+    let dameMovesEat = [];
     let onlyEat = false; // pour limiter les mouvement qu'à ceux qui mange un autre pion
     let i = pi; 
     let j = pj;
@@ -127,13 +128,17 @@ var possibleMoveDame = function(playerID,pi,pj) {
         if(positionToCheck == 0 && !onlyEat) { //si la position est vide et qu'on n'est pas obligé de manger on l'ajoute
             dameMoves.push({i: i-1, j: j-1});
         } 
+        //Si c'est un pion du joueur alors on s'arrete
+        else if(positionToCheck == playerID ||positionToCheck == playerID+2) {
+            break;
+        }
         else if(i-2 < 0 || j-2 < 0) break; // si limite on quitte +2 / -2 obligé apres pour pouvoir au moins vérifié le premier if de la série
         //S'il y a un pion adverse sur le trajet et qu'il ne peut pas être mangé
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i-2][j-2] != 0) {
             break;
         }
         //S'il y a un pion adverse qu'on peut manger
-        else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i-2][j-2] == 0) {
+        else if(positionToCheck != playerID && positionToCheck != playerID+2 && positionToCheck != 0 && plateau[i-2][j-2] == 0) {
             if (!onlyEat) {
                 onlyEat = true;
                 dameMoves = [];
@@ -151,11 +156,14 @@ var possibleMoveDame = function(playerID,pi,pj) {
         if(positionToCheck == 0 && !onlyEat) {
             dameMoves.push({i: i+1, j: j-1});
         }
+        else if(positionToCheck == playerID ||positionToCheck == playerID+2) {
+            break;
+        }
         else if(i+2 > 9 || j-2 < 0) break;
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i+2][j-2] != 0) {
             break;
         }
-        else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i+2][j-2] == 0) {
+        else if(positionToCheck != playerID && positionToCheck != playerID+2 && positionToCheck != 0 && plateau[i+2][j-2] == 0) {
             if (!onlyEat) {
                 onlyEat = true;
                 dameMoves = [];
@@ -173,11 +181,14 @@ var possibleMoveDame = function(playerID,pi,pj) {
         if(positionToCheck == 0 && !onlyEat) {
             dameMoves.push({i: i-1, j: j+1});
         }
+        else if(positionToCheck == playerID ||positionToCheck == playerID+2) {
+            break;
+        }
         else if(i-2 < 0 || j+2 > 9) break;
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i-2][j+2] != 0) {
             break;
         }
-        else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i-2][j+2] == 0) {
+        else if(positionToCheck != playerID && positionToCheck != playerID+2 && positionToCheck != 0 && plateau[i-2][j+2] == 0) {
             if (!onlyEat) {
                 onlyEat = true;
                 dameMoves = [];
@@ -195,11 +206,14 @@ var possibleMoveDame = function(playerID,pi,pj) {
         if(positionToCheck == 0 && !onlyEat) {
             dameMoves.push({i: i+1, j: j+1});
         }
+        else if(positionToCheck == playerID ||positionToCheck == playerID+2) {
+            break;
+        }
         else if(i+2 > 9 || j+2 > 9) break;
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i+2][j+2] != 0) {
             break;
         }
-        else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i+2][j+2] == 0) {
+        else if(positionToCheck != playerID && positionToCheck != playerID+2 && positionToCheck != 0 && plateau[i+2][j+2] == 0) {
             if (!onlyEat) {
                 onlyEat = true;
                 dameMoves = [];
@@ -209,6 +223,7 @@ var possibleMoveDame = function(playerID,pi,pj) {
         }
         i++;j++;
     }
+    // if(onlyEat) return {onlyEat, dameMoves : dameMovesEat};
     return {onlyEat,dameMoves};
 }
 

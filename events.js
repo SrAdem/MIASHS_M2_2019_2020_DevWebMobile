@@ -76,6 +76,7 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
     cleanSquares();
     cleanPawns();
     removePawnEvents(); // On supprime les évenement !
+    selectedPawn = undefined;
     if(eat != false) { //Si le pion a manger un autre pion alors 
         movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.
         console.log(movablePawnPlayer);
