@@ -5,7 +5,7 @@
     3: reine blanche
     4: reine noire
 */
-var plateau = [
+const PLATEAU = [
     [-1, 2, -1, 2, -1, 2, -1, 2, -1, 2],
     [2, -1, 2, -1, 2, -1, 2, -1, 2, -1],
     [-1, 2, -1, 2, -1, 2, -1, 2, -1, 2],
@@ -17,7 +17,8 @@ var plateau = [
     [-1, 1, -1, 1, -1, 1, -1, 1, -1, 1],
     [1, -1, 1, -1, 1, -1, 1, -1, 1, -1],
 ];
-
+var gameGrid; //grid svg du jeu
+var plateau = []; //Plateau du jeu
 /**
  * Fonction de création de svg.
  * Elle prend en entrée le type de svg (svg, cricle, rect ...)
@@ -100,8 +101,13 @@ var grid = function (size) {
     return svgGrid;
 };
 
-
-/*initialisation du plateau*/
-var container = document.getElementById("container");
-var gameGrid = grid(50)
-container.appendChild(gameGrid);
+function initGame() {
+    /*initialisation du plateau*/
+    for (let index = 0; index < PLATEAU.length; index++) {
+        plateau[index] = PLATEAU[index].slice(); 
+    }
+    var container = document.getElementById("container");
+    if (gameGrid != undefined) container.removeChild(gameGrid);
+    gameGrid = grid(50);
+    container.appendChild(gameGrid);
+}

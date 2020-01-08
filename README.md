@@ -18,11 +18,17 @@ Projet de dame dans le cadre d'étude du Master MIASHS WIC et DCISS en deuxième
 
  - Cloner le projet
  ``` https://github.com/SrAdem/MIASHS_M2_2019_2020_DevWebMobile.git ```
+ - Entrer dans le répertoire
+ ``` cd MIASHS_M2_2019_2020_DevWebMobile ```
  - Se placer dans la branch dev (pour le moment)
  ``` git checkout dev ```
  - Installer les dépendances
  ``` npm install ```
- - Lancer Mongo
- ``` mongod --dbpath PATH ```
+ - Si besoin : Entrer dans votre environnement (via conda / miniconda) 
+ ``` conda activate monEnv ```
+ - Lancer Mongo (dans l'environnement)
+ ``` mongod --dbpath PATH/env/monEnv ```
  - Lancer le serveur
  ``` node serveur/serveur.js ```
+ - Lancer votre navigateur préféré et aller sur :
+ ``` localhost:3000 ```

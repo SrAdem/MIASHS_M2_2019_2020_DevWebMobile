@@ -64,7 +64,7 @@ app.post('/inscription', function(req, res)
     var password = htmlspecialchars(req.body.password);
     //On vérifie d'abord s'il y a toute les informations nécessaire à l'inscription. Sinon, on r'envoie une erreur.
     if(name && email && password){
-        var test = User.findOne({email : email}) //On cherche l'email dans la base de donnée car il sert d'identifiant (clé unique).
+        User.findOne({email : email}) //On cherche l'email dans la base de donnée car il sert d'identifiant (clé unique).
             .then ((user) => {
             if(user) { //Si l'email est déjà utilisé, on prévient l'utilisateur.
                 return res.render("accueil.html", {message: "L'utilisateur existe déjà", inscription : true});
@@ -96,7 +96,7 @@ app.get('/jeuDame', function(req, res)
 {
     if(req.session.userId){
         User.findOne({_id : req.session.userId}, function(err, user) {
-            //On stocke dans le jeton le nombre de parties gagnés par le user
+            //On stocke dans le jeton le nombre de parties gagnés par le utilisateur, son nom et son id
             const accessToken = jwt.sign({id : user.id, name : user.name, nbgagnes : user.nbgagnes}, process.env.ACCESS_TOKEN_SECRET);
             res.render('jeuDame.html', {user: user, accessToken: accessToken});
         });
@@ -167,19 +167,22 @@ io.on('authenticated', function (socket) {
         //!!!!! Utile si l'utilisateur refresh sa page volontairement.
         //De plus on enregistre les information du secondPlayer pour pouvoir les envoyer à l'utilisateur (nom de son adversaire)
         var splayer;
+        var playerID;
         if (myroom.firstPlayer.token.id === mytoken.id) {
             myroom.firstPlayer.token = mytoken;
             myroom.firstPlayer.socket = mysocket;
             splayer = myroom.secondPlayer;
+            playerID = "Joueur1";
         }
         else {
             myroom.secondPlayer.token = mytoken;
             myroom.secondPlayer.socket = mysocket;
             splayer = myroom.firstPlayer;
+            playerID = "Joueur2";
         }
         //L'utilisateur rejoins sa "room" et recoit les informations de son adversaire.
         socket.join('room'+myroom.room);
-        socket.emit('secondPlayer', {name : splayer.token.name});
+        socket.emit('secondPlayer', {name : splayer.token.name, nbgagnes : splayer.token.nbgagnes}, playerID);
     }
 
     /**
@@ -196,9 +199,9 @@ io.on('authenticated', function (socket) {
         else {
             //On fait en sorte que chaque joueur a acces aux informations de l'autre joueur et qu'ils entrent dans la même "room"
             var otherPlayer = waitingList.pop();
-            otherPlayer.socket.emit('secondPlayer',{name : mytoken.name, nbgagnes : mytoken.nbgagnes});
+            otherPlayer.socket.emit('secondPlayer',{name : mytoken.name, nbgagnes : mytoken.nbgagnes}, "Joueur1");
             otherPlayer.socket.join('room' + currentRoom);
-            mysocket.emit('secondPlayer',{name : otherPlayer.token.name, nbgagnes : otherPlayer.token.nbgagnes});
+            mysocket.emit('secondPlayer',{name : otherPlayer.token.name, nbgagnes : otherPlayer.token.nbgagnes}, "Joueur2");
             mysocket.join('room' + currentRoom);
             //on enregistre la partie dans la liste des "rooms", parties en cours.
             rooms.push( {room : currentRoom, firstPlayer : otherPlayer, secondPlayer : {token : mytoken, socket : mysocket} } );
@@ -209,15 +212,15 @@ io.on('authenticated', function (socket) {
     /**
      * Envoyé le mouvement d'un joueur à l'autre joueur
      */
-    mysocket.on('movePion', function(selectedPion, destination) {
+    mysocket.on('movePion', function(pawn, move) {
         myroom = rooms.find(room => (room.firstPlayer.token.id === mytoken.id || room.secondPlayer.token.id === mytoken.id));
         var otherPlayer = (myroom.firstPlayer.token === mytoken) ? myroom.secondPlayer : myroom.firstPlayer ;
-        otherPlayer.socket.emit("receiveMove", selectedPion, destination);
-        console.log("move");
+        otherPlayer.socket.emit("receiveMove", pawn, move);
     })
 
     /**
      * Fin de la partie, on enregistre la partie dans la base de donnée et on informe les joueurs de leur victoire/défaite
+     * Celui qui appel cette fonction est le perdant
      */
     mysocket.on('endGame', function() {
         //On récupère la salle des deux joueurs
@@ -225,16 +228,16 @@ io.on('authenticated', function (socket) {
         //Pour en extraire le token et la socket de l'autre joueur
         var otherPlayer = (myroom.firstPlayer.token === mytoken) ? myroom.secondPlayer : myroom.firstPlayer ;
         //On créer le résultat pour l'insérer dans la base de donnée
-        mytoken.nbgagnes = mytoken.nbgagnes + 1; //Si l'un des joueurs gagne, on ajoute 1 à sa nbre de parties gagnées
-        var newRoom = new Room({room : myroom.room, firstPlayer : myroom.firstPlayer.token.id, secondPlayer : myroom.secondPlayer.token.id, winner : mytoken.id});
+        mytoken.nbgagnes = mytoken.nbgagnes + 1; //TODO : A faire dans la bdd ...
+        var newRoom = new Room({room : myroom.room, firstPlayer : myroom.firstPlayer.token.id, secondPlayer : myroom.secondPlayer.token.id, winner : otherPlayer.token.id});
         //On l'enregistre dans la base de donnée
         newRoom.save(function(err, room) {
             if (err) {
                 console.log("erreur d'insertion des résultats !!");
             } else {
                 //Et on affiche les résultats aux utilisateurs
-                mysocket.emit("results", true, mytoken.nbgagnes); //On transfet au client le nombre de parties gagnées du joueur
-                otherPlayer.socket.emit("results", false);
+                mysocket.emit("results", false);
+                otherPlayer.socket.emit("results", true);
             }
         });
         rooms.splice(rooms.indexOf(myroom));

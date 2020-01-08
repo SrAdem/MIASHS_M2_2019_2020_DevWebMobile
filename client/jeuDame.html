@@ -14,15 +14,16 @@
       <div id="readyPlayerOne" class="playerZone">
         <div>
           <b>{{user.name}}</b><br/>
+          <p>Nombre de partis gagnées: {{user.nbgagnes}}<span id="partiesgagnes"></span></p>
         </div>
         <!-- Bouttons pour lancer la partie ou se déconnecter -->
         <div id="beforeGameButtons">
           <form action="/deconnexion">
             <button class="button" type="submit">Déconnexion</button>
-          </form>
-          <button class="button" onclick="findGame()">Jouer</button>
+          </form><br/>
+          <!-- <button class="button" onclick="localGame()">Jouer à 2</button>  -->
+          <button class="button" onclick="findGame()">Jouer en ligne</button>
           <span id="result"></span>
-          <p>Nombre de partis gagnées: <span id="partiesgagnes"></span></p>
         </div>
         <!-- Recherche -->
         <div id="search-player">

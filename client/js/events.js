@@ -76,10 +76,10 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
     cleanSquares();
     cleanPawns();
     removePawnEvents(); // On supprime les évenement !
+    sendMove(pawn.pawn, move); // !!!!!!!!!!!!!! On envoie les éléments pour que l'adversaire refasse le mouvement de son coté 
     selectedPawn = undefined;
     if(eat != false) { //Si le pion a manger un autre pion alors 
         movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.
-        console.log(movablePawnPlayer);
         if(movablePawnPlayer.length == 0) endTurn(); // S'il n'y a pas de possibilité, alors on fini le tour
         else eventOnChoosablePawn(); //Sinon on modifie re ajoute des évenements au pion et aux déplacements possible.
     }
@@ -168,7 +168,7 @@ var movePawn = function(pawn, move) {
     if(eatMove) {                
         //On le supprime du plateau
         plateau[eatI][eatJ]=0;
-        (pawnID == 1 || pawnID == 3) ? blackPlayerNbPawn -- : whitePlayerNbPawn ;
+        (pawnID == 1 || pawnID == 3) ? blackPlayerNbPawn -- : whitePlayerNbPawn -- ;
         //On supprime son svg
         let eatPawnSVG = document.getElementById("lig" + eatI + " col" + eatJ); // On prend le pion svg du plateau
         gameGrid.removeChild(eatPawnSVG);

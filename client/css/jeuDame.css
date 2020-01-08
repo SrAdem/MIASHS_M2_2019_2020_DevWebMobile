@@ -47,7 +47,7 @@ body{
 
 /****************************** Plateau de dame ******************************/
 #container {
-  background-image: url('images/marbre_noir.jpg');
+  background-image: url('/client/images/marbre_noir.jpg');
   padding: 20px;
   border: solid 1px black;
   width: 85vmin;

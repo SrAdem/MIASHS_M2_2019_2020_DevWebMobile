@@ -27,7 +27,8 @@ function findGame() {
 }
 
 //Le second joueur est présent, on affiche ce qu'il faut
-socket.on('secondPlayer', function(autherPlayer) {
+socket.on('secondPlayer', function(autherPlayer,iAmThePlayer) {
+  onlineGame(iAmThePlayer);
   document.getElementById("search-player").setAttribute("style","display:none");
   document.getElementById("beforeGameButtons").setAttribute("style","display:none");
   document.getElementById("inGameButtons").setAttribute("style", "display:block");
@@ -39,39 +40,37 @@ socket.on('secondPlayer', function(autherPlayer) {
 });
 
 //Mouvement
-function move(id) {
-  caseSelct(id);
-  socket.emit('movePion', selectedPion, id);
-  suppEvenementClick();
-  console.log("move");
+function sendMove(pawn, move) {
+  socket.emit('movePion', pawn, move);
 }
 
 //Recois un mouvment
-socket.on('receiveMove', function(selectedPion, destination) {
-  console.log(selectedPion, destination);
-  moveEffectuer(selectedPion, destination);
-  AjoutEvenementClick();
-  console.log("receiveMove");
+socket.on('receiveMove', function(pawn, move) {
+  var anotherMove = movePawn(pawn, move);
+  // if (!anotherMove) turnOf(joueur);
+  var player = (joueur=="Joueur1")?"Joueur2":"Joueur1";
+  if(anotherMove != false) { //Si le pion a manger un autre pion alors 
+    movablePawnPlayer = anotherMoveWithEat(player, anotherMove.i, anotherMove.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.
+    if(movablePawnPlayer.length == 0) endTurn(joueur); // S'il n'y a pas de possibilité, alors on fini le tour
+  }
+  else endTurn(joueur);
 })
 
-//Mouvement gagnant
-function IWin(){
-  socket.emit('endGame');
+//Mouvement de fin
+function ILost() {
+  socket.emit('endGame'); //Celui qui envoie est le perdant !
 }
 
 //Résultats
-socket.on('results', function(win, partiesGagnes) {
+socket.on('results', function(win) {
   document.getElementById("beforeGameButtons").setAttribute("style","display:block");
   document.getElementById("inGameButtons").setAttribute("style", "display:none");
   document.getElementById("container").setAttribute("style", "display:none");
   document.getElementById("readyPlayerTwo").setAttribute("style", "display:none");
 
-  console.log("in" + win );
   var resultSpan = document.getElementById("result");
-  var resultPartiesGagnes =  document.getElementById("partiesgagnes"); //On récupère l'élément span créé dans le html
   if(win) {
     resultSpan.setAttribute("style","display:block; background-color:green");
-    resultPartiesGagnes.innerText = partiesGagnes; // On remplace son texte par le nombre de parties gagnées
     resultSpan.innerHTML="Vous avez gagné !"; 
   }
   else {
@@ -79,5 +78,3 @@ socket.on('results', function(win, partiesGagnes) {
     resultSpan.innerHTML="Vous avez Perdu :'("; 
   }
 })
-
-//Retour à l'interface de base
