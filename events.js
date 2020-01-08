@@ -33,10 +33,8 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
         movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j);
         console.log(movablePawnPlayer);
         if(movablePawnPlayer.length == 0) {
-            console.log("un");
             endTurn();
         }
-        console.log("deux");
         eventOnChoosablePawn();
     }
     else {
@@ -57,12 +55,35 @@ var removeEvents = function() {
 var movePawn = function(pawn, move) {
     let i = pawn.i;
     let j = pawn.j;
+    let pawnID = plateau[i][j]; // On prend le pion de sa position
     let newi = move.i;
     let newj = move.j;
-    let eatMove = (newi == i+2 ||newi == i-2)? true : false; // On regarde si c'est un mouvement qui mange un pion
+    let eatMove //= (newi == i+2 ||newi == i-2)? true : false; // On regarde si c'est un mouvement qui mange un pion
+    let eatI = -1;
+    let eatJ = -1; 
 
+    if(pawnID > 0) {// Si c'est une dame
+        //on cherche la direction 
+        eatI = (newi-i>=1)?1:-1; 
+        eatJ = (newj-j>=1)?1:-1;
+        while(i<=9 && i>=0 && j<=9 & j>=0) {
+            //S'il y a un pion entre la position de départ et la destination
+            if(plateau[i][j]!=pawnID && plateau[i][j]!=pawnID+2 && plateau[i][j]!=0) { 
+                eatMove = true;
+                eatI = i;
+                eatJ = j;
+                break;
+            }
+            if(i == newi && j == newj) break;
+            i= i+eatI;
+            j= j+eatJ;
+        }
+    }
+
+    i = pawn.i;
+    j = pawn.j;
+    
     //Sur le plateau !
-    let pawnID = plateau[i][j]; // On prend le pion de sa position
     plateau[i][j]=0; // On met la position à 0
 
     //si un pion blanc atteint le haut du plateau ou un pion noir le bas
@@ -80,10 +101,7 @@ var movePawn = function(pawn, move) {
     gameGrid.appendChild(newPawnSVG); // On l'ajoute sur le plateau
 
     //Si c'est un mouvement qui mange un pion alors
-    if(eatMove) {
-        let eatI = (newi-i>1)?i+1:i+-1;
-        let eatJ = (newj-j>1)?j+1:j+-1;
-        
+    if(eatMove) {                
         //On le supprime du plateau
         plateau[eatI][eatJ]=0;
         //On supprime son svg

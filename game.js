@@ -4,16 +4,7 @@ var joueur = "Joueur1";
 //garder une trace du pion qui a été séléctionner 
 var elemClignote;
 var localGame = true;
-
-// console.log(" me : " + pawn + " / my friend : " + positionToCheck); 
-// console.log(" i : " + i + " / j : " + j)
-// console.log("i : " + i + " / j : " + j + " / id : " + id + " / jd :" + jd);
-// console.log("x : " + checkPositionI + " / y : " + checkPositionJ);
-
-var movablePawnPlayer = movablePawn("Joueur1");
-
-var turnFunction = function() {
-}
+var movablePawnPlayer;
 
 var turnOf = function(playerTurn) {
     movablePawnPlayer = movablePawn(playerTurn);
