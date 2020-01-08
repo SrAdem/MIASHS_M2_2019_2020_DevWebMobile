@@ -121,12 +121,13 @@ var possibleMoveDame = function(playerID,pi,pj) {
     let i = pi; 
     let j = pj;
     //parcours du pion au limite du plateau
-    while(i>=0 && j>=0 && i<9 && j<9) {
-        if(i-1 < 0 || j-1 < 0) break; // si limite on quitte
+    while(i>=0 && j>=0 && i<=9 && j<=9) {
+        if(i-1 < 0 || j-1 < 0) break; // si limite on quitte +1 / -1
         let positionToCheck = plateau[i-1][j-1];
         if(positionToCheck == 0 && !onlyEat) { //si la position est vide et qu'on n'est pas obligé de manger on l'ajoute
             dameMoves.push({i: i-1, j: j-1});
         } 
+        else if(i-2 < 0 || j-2 < 0) break; // si limite on quitte +2 / -2 obligé apres pour pouvoir au moins vérifié le premier if de la série
         //S'il y a un pion adverse sur le trajet et qu'il ne peut pas être mangé
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i-2][j-2] != 0) {
             break;
@@ -144,12 +145,13 @@ var possibleMoveDame = function(playerID,pi,pj) {
     }
     i = pi;
     j = pj;
-    while(i>=0 && j>=0 && i<9 && j<9) {
+    while(i>=0 && j>=0 && i<=9 && j<=9) {
         if(i+1 > 9 || j-1 < 0) break;
         let positionToCheck = plateau[i+1][j-1];
         if(positionToCheck == 0 && !onlyEat) {
             dameMoves.push({i: i+1, j: j-1});
         }
+        else if(i+2 > 9 || j-2 < 0) break;
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i+2][j-2] != 0) {
             break;
         }
@@ -165,12 +167,13 @@ var possibleMoveDame = function(playerID,pi,pj) {
     }
     i = pi;
     j = pj;
-    while(i>=0 && j>=0 && i<9 && j<9) {
+    while(i>=0 && j>=0 && i<=9 && j<=9) {
         if(i-1 < 0 || j+1 > 9) break;
         let positionToCheck = plateau[i-1][j+1];
         if(positionToCheck == 0 && !onlyEat) {
             dameMoves.push({i: i-1, j: j+1});
         }
+        else if(i-2 < 0 || j+2 > 9) break;
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i-2][j+2] != 0) {
             break;
         }
@@ -186,12 +189,13 @@ var possibleMoveDame = function(playerID,pi,pj) {
     }
     i = pi;
     j = pj;
-    while(i>=0 && j>=0 && i<9 && j<9) {
+    while(i>=0 && j>=0 && i<=9 && j<=9) {
         if(i+1 > 9|| j+1 > 9) break;
         let positionToCheck = plateau[i+1][j+1];
         if(positionToCheck == 0 && !onlyEat) {
             dameMoves.push({i: i+1, j: j+1});
         }
+        else if(i+2 > 9 || j+2 > 9) break;
         else if(positionToCheck != playerID && positionToCheck != playerID+2 && plateau[i+2][j+2] != 0) {
             break;
         }

@@ -1,3 +1,6 @@
+/**
+ * Ajout d'évenement aux pions
+ */
 var eventOnChoosablePawn = function () {
     movablePawnPlayer.forEach((pawn, index) => {
         let svg = document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j);
@@ -5,53 +8,74 @@ var eventOnChoosablePawn = function () {
     });
 }
 
-var eventOnChoosableSquare = function (pawn, indexOfPawn) {
-    pawn.possibleMove.forEach( (move, index) => {
+/**
+ * Ajout d'évenement aux cases
+ * @param {*} indexOfPawn : index du pion pour prendre les cases où il peut aller
+ */
+var eventOnChoosableSquare = function (indexOfPawn) {
+    movablePawnPlayer[indexOfPawn].possibleMove.forEach( (move, index) => {
         let svg = document.getElementById("Lig" + move.i + " Col" + move.j);
         svg.setAttribute("onclick", "selectSquare(" + index + ", " + indexOfPawn + ")");
     });
 }
 
+/**
+ * Evenement d'un pion
+ * @param {int} indexOfPawn : index du pion dans la table
+ */
 var selectPawn = function (indexOfPawn) {
-    pawn = movablePawnPlayer[indexOfPawn];
+    pawn = movablePawnPlayer[indexOfPawn]; // On prend le pion choisi dans le tableau movablePawnPlayer
     let elemClick = document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j);
-    var couleurPion = elemClick.getAttribute("fill");
-
+    //Pour faire clignoter le pion choisi
     if (elemClignote != undefined) elemClignote.removeAttribute("class");
     elemClick.setAttribute("class", "pionActif");
     elemClignote = elemClick;
 
-    eventOnChoosableSquare(pawn, indexOfPawn);
+    eventOnChoosableSquare(indexOfPawn); // On ajoute un évenement à toutes les cases où le pion peut aller.
 }
 
+/**
+ * movablePawnPlayer est la table contenant ce qu'il faut (pion et les déplacement du pion)
+ * Evenement d'une case
+ * @param {int} indexOfMove : index de la case choisi dans la table du pion choisi dans movablePawnPlayer
+ * @param {int} indexOfPawn : index du pion dans le tableau
+ */
 var selectSquare = function(indexOfMove, indexOfPawn) {
-    pawn = movablePawnPlayer[indexOfPawn];
-    move = pawn.possibleMove[indexOfMove];
-    var eat = movePawn(pawn.pawn, move);
-    removeEvents();
-    if(eat != false) {
-        movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j);
+    pawn = movablePawnPlayer[indexOfPawn]; // On prend le pion choisi
+    move = pawn.possibleMove[indexOfMove]; // On trouve la case sur laquel le joueur à clique sur le tableau de mouvement possible du pion
+    var eat = movePawn(pawn.pawn, move); // On bouge le pion
+    removeEvents(); // On supprime les évenement !
+    if(eat != false) { //Si le pion a manger un autre pion alors 
+        movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.
         console.log(movablePawnPlayer);
-        if(movablePawnPlayer.length == 0) {
-            endTurn();
-        }
-        eventOnChoosablePawn();
+        if(movablePawnPlayer.length == 0) endTurn(); // S'il n'y a pas de possibilité, alors on fini le tour
+        else eventOnChoosablePawn(); //Sinon on modifie re ajoute des évenements au pion et aux déplacements possible.
     }
-    else {
+    else { //Si c'est un mouvement simple alors on funu le tour.
         endTurn();
     }
 }
 
+/**
+ * Fonction qui supprime tout les évenements
+ */
 var removeEvents = function() {
-    movablePawnPlayer.forEach((pawn) => {
+    //Parcours toute la table des possibilitées et supprime l'évènement.
+    movablePawnPlayer.forEach((pawn) => { //Chaque pion
         let pawnSVG = document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j);
-        if (pawnSVG != null) document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j).removeAttribute("onclick");
-        pawn.possibleMove.forEach((move) => {
+        //Si c'est un pion qu'on a pas déplacé, on supprime son évenement
+        if (pawnSVG != null) document.getElementById("lig" + pawn.pawn.i + " col" + pawn.pawn.j).removeAttribute("onclick"); 
+        pawn.possibleMove.forEach((move) => { //On supprime tout les évents des cases
             svg = document.getElementById("Lig" + move.i + " Col" + move.j).removeAttribute("onclick");
         });
     });
 }
 
+/**
+ * Fonction de déplacement d'un pion
+ * @param {int, int} pawn : contient le i et j du pion
+ * @param {int, int} move : contient le i et j de la case ciblé
+ */
 var movePawn = function(pawn, move) {
     let i = pawn.i;
     let j = pawn.j;
@@ -66,20 +90,20 @@ var movePawn = function(pawn, move) {
         //on cherche la direction 
         eatI = (newi-i>=1)?1:-1; 
         eatJ = (newj-j>=1)?1:-1;
+        //S'il y a un pion entre la position de départ et la destination
         while(i<=9 && i>=0 && j<=9 & j>=0) {
-            //S'il y a un pion entre la position de départ et la destination
+            if(i == newi && j == newj) break; //Si à la position ciblé, c'est qu'il n'y a pas de pion au milieu
             if(plateau[i][j]!=pawnID && plateau[i][j]!=pawnID+2 && plateau[i][j]!=0) { 
                 eatMove = true;
                 eatI = i;
                 eatJ = j;
                 break;
             }
-            if(i == newi && j == newj) break;
             i= i+eatI;
             j= j+eatJ;
         }
     }
-
+    //On reprend les position du pion
     i = pawn.i;
     j = pawn.j;
     
@@ -104,6 +128,7 @@ var movePawn = function(pawn, move) {
     if(eatMove) {                
         //On le supprime du plateau
         plateau[eatI][eatJ]=0;
+        (pawnID == 1 || pawnID == 3) ? blackPlayerNbPawn -- : whitePlayerNbPawn ;
         //On supprime son svg
         let eatPawnSVG = document.getElementById("lig" + eatI + " col" + eatJ); // On prend le pion svg du plateau
         gameGrid.removeChild(eatPawnSVG);
