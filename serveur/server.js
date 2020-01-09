@@ -159,7 +159,9 @@ var waitingList = []; //Utilisateurs en attente
 io.on('authenticated', function (socket) {
     var mysocket = socket;
     var mytoken = socket.decoded_token;
-
+    var myInitWins = mytoken.nbgagnes;
+    mysocket.emit('updateWins', mytoken.nbgagnes); //On envoie le nombre de victoire du joueur
+  
     //Regarde si l'utilisateur est déjà sur une table
     var myroom = rooms.find(room => (room.firstPlayer.token.id === mytoken.id || room.secondPlayer.token.id === mytoken.id));
     if(myroom) { //Si l'utilisateur est déjà sur une table :
@@ -228,7 +230,7 @@ io.on('authenticated', function (socket) {
         //Pour en extraire le token et la socket de l'autre joueur
         var otherPlayer = (myroom.firstPlayer.token === mytoken) ? myroom.secondPlayer : myroom.firstPlayer ;
         //On créer le résultat pour l'insérer dans la base de donnée
-        mytoken.nbgagnes = mytoken.nbgagnes + 1; //TODO : A faire dans la bdd ...
+        otherPlayer.token.nbgagnes = otherPlayer.token.nbgagnes + 1; //On incrément le nombre de victoire du gagnant
         var newRoom = new Room({room : myroom.room, firstPlayer : myroom.firstPlayer.token.id, secondPlayer : myroom.secondPlayer.token.id, winner : otherPlayer.token.id});
         //On l'enregistre dans la base de donnée
         newRoom.save(function(err, room) {
@@ -237,7 +239,8 @@ io.on('authenticated', function (socket) {
             } else {
                 //Et on affiche les résultats aux utilisateurs
                 mysocket.emit("results", false);
-                otherPlayer.socket.emit("results", true);
+                otherPlayer.socket.emit("results", true); 
+                otherPlayer.socket.emit("updateWins", otherPlayer.token.nbgagnes) //On dit au gagnant de mettre à jour son interface
             }
         });
         rooms.splice(rooms.indexOf(myroom));
@@ -249,6 +252,12 @@ io.on('authenticated', function (socket) {
     mysocket.on('disconnect', function(){
         var pos = waitingList.indexOf({token : mytoken, socket : mysocket});
         waitingList.splice(pos,1);
+        if(myInitWins != mytoken.nbgagnes) { //Si l'utilisateur à gagner des parties avant de quitter on met a jour la base de donnée
+            User.findOne({_id : mytoken.id}, function(err, user) { 
+                user.nbgagnes = mytoken.nbgagnes;
+                user.save();
+            });
+        }
     })
 });
 

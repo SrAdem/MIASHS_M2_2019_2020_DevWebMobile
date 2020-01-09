@@ -17,6 +17,10 @@ socket.on('disconnect', function () {
   console.log('Disconnected');
 });
 
+socket.on('updateWins', function (wins) {
+  document.getElementById('partiesgagnes').innerHTML = wins;
+});
+
 /* Fonctions js de la page */
 
 //Chercher un joueur peut-être en attente de celui-ci
@@ -35,7 +39,7 @@ socket.on('secondPlayer', function(autherPlayer,iAmThePlayer) {
   document.getElementById("container").setAttribute("style", "display:block");
 
   var player2div = document.getElementById("readyPlayerTwo");
-  player2div.innerHTML = "<b>" + autherPlayer.name + "</b>";
+  player2div.innerHTML = "<b>" + autherPlayer.name + "</b><br/>Nombre de partis gagnées: " + autherPlayer.nbgagnes;
   player2div.setAttribute("style", "display:block");
 });
 
