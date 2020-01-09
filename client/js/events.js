@@ -76,7 +76,7 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
     cleanSquares();
     cleanPawns();
     removePawnEvents(); // On supprime les évenement !
-    sendMove(pawn.pawn, move); // !!!!!!!!!!!!!! On envoie les éléments pour que l'adversaire refasse le mouvement de son coté 
+    if (!localGame) sendMove(pawn.pawn, move); // !!!!!!!!!!!!!! On envoie les éléments pour que l'adversaire refasse le mouvement de son coté seuelemtn en partie en ligne
     selectedPawn = undefined;
     if(eat != false) { //Si le pion a manger un autre pion alors 
         movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.

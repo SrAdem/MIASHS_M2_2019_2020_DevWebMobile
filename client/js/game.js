@@ -40,7 +40,7 @@ var endTurn = function(player) {
 /**
  * permettra de lancer une partie en local
  */
-function localGame() {
+function playLocalGame() {
     initGame();
     document.getElementById("beforeGameButtons").setAttribute("style","display:none");
     document.getElementById("inGameButtons").setAttribute("style", "display:block");

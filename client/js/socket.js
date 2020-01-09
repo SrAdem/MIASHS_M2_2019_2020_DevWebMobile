@@ -62,7 +62,8 @@ socket.on('receiveMove', function(pawn, move) {
 
 //Mouvement de fin
 function ILost() {
-  socket.emit('endGame'); //Celui qui envoie est le perdant !
+  if (!localGame) socket.emit('endGame'); //Celui qui envoie est le perdant !
+  else surrend();
 }
 
 //Résultats
