@@ -101,10 +101,13 @@ var grid = function (size) {
     return svgGrid;
 };
 
-function initGame() {
+function initGame(board) {
     /*initialisation du plateau*/
-    for (let index = 0; index < PLATEAU.length; index++) {
-        plateau[index] = PLATEAU[index].slice(); 
+    if (board) plateau = board
+    else {
+        for (let index = 0; index < PLATEAU.length; index++) {
+            plateau[index] = PLATEAU[index].slice(); 
+        }
     }
     var container = document.getElementById("container");
     if (gameGrid != undefined) container.removeChild(gameGrid);

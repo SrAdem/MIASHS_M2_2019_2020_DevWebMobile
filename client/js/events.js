@@ -77,7 +77,8 @@ var selectSquare = function(indexOfMove, indexOfPawn) {
     cleanPawns();
     removePawnEvents(); // On supprime les évenement !
     if (!localGame) sendMove(pawn.pawn, move); // !!!!!!!!!!!!!! On envoie les éléments pour que l'adversaire refasse le mouvement de son coté seuelemtn en partie en ligne
-    selectedPawn = undefined;
+    selectedPawn = undefined; //Plus de pion selectionne
+    movablePawnPlayer = []; //Plus de mouvement possible
     if(eat != false) { //Si le pion a manger un autre pion alors 
         movablePawnPlayer = anotherMoveWithEat(joueur, eat.i, eat.j); //On cherche s'il y a encore moyen de manger un autre pion avec le même pion qui a manger.
         if(movablePawnPlayer.length == 0) endTurn(); // S'il n'y a pas de possibilité, alors on fini le tour

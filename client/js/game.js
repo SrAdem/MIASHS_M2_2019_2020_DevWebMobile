@@ -20,8 +20,7 @@ var turnOf = function(playerTurn) {
  * En mode en ligne, player est null quand le joueur courant appel la fonction est est égal au nom du joueur 
  * qui va jouer pour appeller la fonction turnOf lui permettant de jouer
  */
-var endTurn = function(player) { 
-    console.log(player)
+var endTurn = function(player) {
     if(whitePlayerNbPawn == 0) {
         if(player == "Joueur1") ILost();
     }

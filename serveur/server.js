@@ -183,9 +183,20 @@ io.on('authenticated', function (socket) {
             playerID = "Joueur2";
         }
         //L'utilisateur rejoins sa "room" et recoit les informations de son adversaire.
-        socket.join('room'+myroom.room);
-        socket.emit('secondPlayer', {name : splayer.token.name, nbgagnes : splayer.token.nbgagnes}, playerID);
+        mysocket.join('room'+myroom.room);
+        mysocket.emit('secondPlayer', {name : splayer.token.name, nbgagnes : splayer.token.nbgagnes}, playerID);
+        splayer.socket.emit('needGameState') // On demande l'état du jeu à l'adversaire.
     }
+
+    /**
+     * L'utilisateur à recu une demande de l'état du jeu.
+     */
+    mysocket.on('gameState', function(board, otherPlayerTurn, pawns) {
+        //On prend la joueur qui a besoin de l'état du jeu pour lui envoyer.
+        myroom = rooms.find(room => (room.firstPlayer.token.id === mytoken.id || room.secondPlayer.token.id === mytoken.id));
+        otherPlayer = (myroom.firstPlayer.token === mytoken) ? myroom.secondPlayer : myroom.firstPlayer ; 
+        otherPlayer.socket.emit('gameStateSend', board, otherPlayerTurn, pawns);
+    })
 
     /**
      * L'utilisateur demande à affronter quelqu'un.
@@ -206,7 +217,8 @@ io.on('authenticated', function (socket) {
             mysocket.emit('secondPlayer',{name : otherPlayer.token.name, nbgagnes : otherPlayer.token.nbgagnes}, "Joueur2");
             mysocket.join('room' + currentRoom);
             //on enregistre la partie dans la liste des "rooms", parties en cours.
-            rooms.push( {room : currentRoom, firstPlayer : otherPlayer, secondPlayer : {token : mytoken, socket : mysocket} } );
+            myroom = {room : currentRoom, firstPlayer : otherPlayer, secondPlayer : {token : mytoken, socket : mysocket} }
+            rooms.push( myroom );
             currentRoom++;
         }
     })

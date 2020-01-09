@@ -17,11 +17,27 @@ socket.on('disconnect', function () {
   console.log('Disconnected');
 });
 
+//Met à jour l'affichage du nombre de victoire
 socket.on('updateWins', function (wins) {
   document.getElementById('partiesgagnes').innerHTML = wins;
 });
 
 /* Fonctions js de la page */
+
+//L'adversaire me demande l'état du jeu
+socket.on('needGameState', function() {
+  // Si c'est j'ai des pions à déplacer alors c'est mon tour sinon c'est au tour de mon adversaire
+  var otherPlayerTurn = (movablePawnPlayer != undefined || movablePawnPlayer.length == 0) ? true : false ;
+  // J'envoie coté serveur le plateau et un booleen pour le tour de mon adversaire 
+  socket.emit('gameState', plateau, otherPlayerTurn, {white : whitePlayerNbPawn, black : blackPlayerNbPawn});
+})
+
+socket.on('gameStateSend', function(board, myturn, pawns) {
+  initGame(board);
+  whitePlayerNbPawn = pawns.white;
+  blackPlayerNbPawn = pawns.black;
+  if(myturn) endTurn(joueur);
+})
 
 //Chercher un joueur peut-être en attente de celui-ci
 function findGame() {
