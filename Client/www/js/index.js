@@ -27,7 +27,7 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
-        var socket = io.connect("192.168.42.111:12345")
+
     },
 };
 

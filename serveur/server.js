@@ -49,8 +49,6 @@ app.use(express.urlencoded({ extended: true }));
 //Si l'utilisateur est déjà connecté, il est redirigé directement vers la page de jeu. Sinon il va à la pge d'accueil.
 app.get('/', function(req, res)
 {
-    res.send("slt");
-    console.log("slt")
     if(req.session.userId){
         res.redirect('/jeuDame');
     }else{
@@ -61,7 +59,6 @@ app.get('/', function(req, res)
 //post pour l'inscription d'un joueur
 app.post('/inscription', function(req, res,)
 {
-    console.log("sl")
     //On utilise htmlspecialchars pour éviter l'injection.
     var name = htmlspecialchars(req.body.name);
     var email = htmlspecialchars(req.body.email);
@@ -98,7 +95,6 @@ app.post('/inscription', function(req, res,)
 //Le "post" pour pouvoir se connecter au jeu et le "get" dans le cas où l'utilisateur souhaite accédé au jeu.
 app.get('/jeuDame', function(req, res)
 {
-    console.log("sl")
     if(req.session.userId){
         User.findOne({_id : req.session.userId}, function(err, user) {
             //On stocke dans le jeton le nombre de parties gagnés par le utilisateur, son nom et son id
@@ -112,7 +108,6 @@ app.get('/jeuDame', function(req, res)
 
 app.post('/jeuDame', function(req, res)
 {
-    console.log("slt")
     var email = htmlspecialchars(req.body.email);
     var password = htmlspecialchars(req.body.password);
     if(email && password){ //On vérifie qu'il y a bien les information nécessaire à la connexion.
@@ -151,8 +146,6 @@ app.get('/deconnexion', function(req, res)
 io.sockets.on('connection', socketioJwt.authorize({
     secret: process.env.ACCESS_TOKEN_SECRET,
     timeout: 15000
-}, function() {
-    console.log("connected");
 }));
 
 var currentRoom = 0; //Numéro de la salle
@@ -165,7 +158,6 @@ var waitingList = []; //Utilisateurs en attente
  * Quand l'utilisateur est connecté sur sa session et sur la page du jeu.
  */
 io.on('authenticated', function (socket) {
-    console.log("connecte");
     var mysocket = socket;
     var mytoken = socket.decoded_token;
     var myInitWins = mytoken.nbgagnes;
