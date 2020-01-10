@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+        <!-- <link rel="stylesheet" type="text/css" href="css/index.css"> -->
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <title>Jeu de dames</title>
+        <script type="text/javascript" src="js/accueil.js"></script>
+    </head>
+    <body onload="loadPage()"> <!-- permet d'afficher soit la partie identification soit la partie inscription -->
+
+        <h1>Collectif Métissé - Projet jeu de dames</h1>
+        <h1>Page d'authentification</h1>
+        <p><spam style="color: red;"><b>{{ message }}</b></spam></p>
+        <!-- Partie Connexion -->
+        <div id="connexionDiv">
+            <form action="http://192.168.43.99:12345/jeuDame" method="post">
+                <p><input type="email" name="email" placeholder="Adresse e-mail" id="email" required></p>
+                <p><input type="password" name="password" placeholder="Mot de passe" id="password" required></p>
+                <p><input type="submit" name="submit" value="Connexion" id="submit"></p>
+            </form>
+            <div id="pour_inscrire">
+                <p onclick="inscriptionDiv()">Vous n'avez pas de compte? Cliquez ici pour vous inscrire</p>
+            </div>
+        </div>
+    
+        <!-- Partie Inscription -->
+        <div id="inscriptionDiv">
+            <form action="http://192.168.43.99:12345/inscription" method="post">
+                <p><input type="text" name="name" placeholder="Nom" id="name" required></p>
+                <p><input type="email" name="email" placeholder="Adresse e-mail" id="email" required></p>
+                <p><input type="password" name="password" placeholder="Mot de passe" id="password" required></p>
+                <p><input type="submit" name="submit" value="S'inscrire" id="submit"></p>
+            </form>
+            <div id="pour_inscrire">
+                <p onclick="connexionDiv()">Vous avez déjà un compte? Se connecter</p>
+            </div>
+        </div>
+        <script src="./js/socket.io.js"></script>  
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+    </body>
+</html>

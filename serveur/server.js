@@ -3,10 +3,11 @@ require('dotenv').config();
 // express + socketio + jsonwebtoken
 var express = require('express');
 var app = express();
-var http = require('http').Server(app);
+
+var http = require('http');
+var server = http.createServer(app);
 var socketioJwt = require('socketio-jwt');
-var socket = require('socket.io');
-var io = socket.listen(http);
+var io = require("socket.io").listen(server);
 var jwt = require('jsonwebtoken');
 var htmlspecialchars = require('htmlspecialchars');
 //database + secur
@@ -15,8 +16,8 @@ require('./mongoCo');
 var bcrypt = require('bcryptjs');
 
 //Models
-require('../model/roomModel');
-require('../model/userModel');
+require('./model/roomModel');
+require('./model/userModel');
 var Room = mongoose.model('Room');
 var User = mongoose.model('User');
 
@@ -35,8 +36,8 @@ var sessionOptions = {
 app.use(session(sessionOptions));
 
 /*Pour envoyer les pages html avec le style css, sinon le style ne va pas être appliqué*/
-app.use(express.static(__dirname.slice(0,-7)+'client'));
-app.set('views', __dirname.slice(0,-7) + '\client')
+app.use(express.static(__dirname.slice(0,-7)+'Client\\www'));
+app.set('views', __dirname.slice(0,-7) + '\\Client\\www')
 var engine = require('consolidate');
 app.engine('html', engine.mustache);
 app.set('view engine', 'html');
@@ -48,16 +49,19 @@ app.use(express.urlencoded({ extended: true }));
 //Si l'utilisateur est déjà connecté, il est redirigé directement vers la page de jeu. Sinon il va à la pge d'accueil.
 app.get('/', function(req, res)
 {
+    res.send("slt");
+    console.log("slt")
     if(req.session.userId){
         res.redirect('/jeuDame');
     }else{
-        res.render('accueil.html');
+        res.render('index.html');
     }
 });
 
 //post pour l'inscription d'un joueur
-app.post('/inscription', function(req, res)
+app.post('/inscription', function(req, res,)
 {
+    console.log("sl")
     //On utilise htmlspecialchars pour éviter l'injection.
     var name = htmlspecialchars(req.body.name);
     var email = htmlspecialchars(req.body.email);
@@ -67,7 +71,7 @@ app.post('/inscription', function(req, res)
         User.findOne({email : email}) //On cherche l'email dans la base de donnée car il sert d'identifiant (clé unique).
             .then ((user) => {
             if(user) { //Si l'email est déjà utilisé, on prévient l'utilisateur.
-                return res.render("accueil.html", {message: "L'utilisateur existe déjà", inscription : true});
+                return res.render("index.html", {message: "L'utilisateur existe déjà", inscription : true});
             }
             else{ //Sinon on l'ajoute à la base de donnée en lui indiquant que son compté à bien était crée.
                 var newUser = new User(req.body);
@@ -81,19 +85,20 @@ app.post('/inscription', function(req, res)
                 });
             } else {
                 user.hash_password = undefined;
-                return res.render("accueil.html", {message: "Compte crée avec succes !", inscription : false});
+                return res.render("index.html", {message: "Compte crée avec succes !", inscription : false});
             }
         });
     }
     });
     }  else {
-        res.render("accueil.html", {message: "Erreur d'inscription", inscription : true});
+        res.render("index.html", {message: "Erreur d'inscription", inscription : true});
     }
 });
 
 //Le "post" pour pouvoir se connecter au jeu et le "get" dans le cas où l'utilisateur souhaite accédé au jeu.
 app.get('/jeuDame', function(req, res)
 {
+    console.log("sl")
     if(req.session.userId){
         User.findOne({_id : req.session.userId}, function(err, user) {
             //On stocke dans le jeton le nombre de parties gagnés par le utilisateur, son nom et son id
@@ -101,12 +106,13 @@ app.get('/jeuDame', function(req, res)
             res.render('jeuDame.html', {user: user, accessToken: accessToken});
         });
     }else{
-        res.render('accueil.html');
+        res.render('index.html');
     }
 });
 
 app.post('/jeuDame', function(req, res)
 {
+    console.log("slt")
     var email = htmlspecialchars(req.body.email);
     var password = htmlspecialchars(req.body.password);
     if(email && password){ //On vérifie qu'il y a bien les information nécessaire à la connexion.
@@ -114,10 +120,10 @@ app.post('/jeuDame', function(req, res)
             function(err, user) {
                 if (err) throw err;
                 if (!user) { //Si l'email n'est pas dans la base de donnée alors on indique à l'utilisateur qu'une information est érroné. 
-                    res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
+                    res.render('index.html', {message: 'Email ou mot de passe incorrect'});
                 } else if (user) {
                     if (!user.comparePassword(req.body.password)) { //Si le mot de passe n'est pas correct alors on indique à l'utilisateur qu'une information est érroné.
-                        res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
+                        res.render('index.html', {message: 'Email ou mot de passe incorrect'});
                     } else { //Si tout est correcte alors on connecte l'utilisateur.
                         req.session.userId = user._id;
                         //On envoie au serveur les donnée de l'utilisateur pour qu'il n'ai pas à faire plusieurs requete.
@@ -128,7 +134,7 @@ app.post('/jeuDame', function(req, res)
             });
     }
     else {
-        res.render('accueil.html', {message: 'Email ou mot de passe incorrect'});
+        res.render('index.html', {message: 'Email ou mot de passe incorrect'});
     }
 });
 
@@ -142,9 +148,11 @@ app.get('/deconnexion', function(req, res)
 });
 
 /****************************** Socket ******************************/
-io.on('connection', socketioJwt.authorize({
+io.sockets.on('connection', socketioJwt.authorize({
     secret: process.env.ACCESS_TOKEN_SECRET,
     timeout: 15000
+}, function() {
+    console.log("connected");
 }));
 
 var currentRoom = 0; //Numéro de la salle
@@ -157,6 +165,7 @@ var waitingList = []; //Utilisateurs en attente
  * Quand l'utilisateur est connecté sur sa session et sur la page du jeu.
  */
 io.on('authenticated', function (socket) {
+    console.log("connecte");
     var mysocket = socket;
     var mytoken = socket.decoded_token;
     var myInitWins = mytoken.nbgagnes;
@@ -273,6 +282,4 @@ io.on('authenticated', function (socket) {
     })
 });
 
-http.listen(3000, function(){
-    console.log("Server running on 3000")
-});
+server.listen(12345);
